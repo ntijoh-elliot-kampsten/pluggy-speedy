@@ -15,8 +15,7 @@ defmodule Pluggy.PizzaController do
         nil -> nil
         _ -> User.get(session_user)
       end
-      # lägg senare till: pizzas: "Pizza.all()," i send_resp
-    send_resp(conn, 200, render("pizzas/index", user: current_user))
+    send_resp(conn, 200, render("pizzas/index", pizzas: Pizza.all(), user: current_user))
   end
 
   #render använder eex
