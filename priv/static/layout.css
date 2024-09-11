@@ -7,8 +7,39 @@ header {
 #tonys-pizza-logo {
     width: 40%;
 }
-#checkout-basket {
+#tonys-pizza-logo:hover {
+    cursor: pointer;
+}
+#checkout-basket-container {
+    display: flex;
+    position: relative;
+    justify-content: left;
+    align-items: flex-start;
     margin-left: 20px;
     width: 6%;
+}
+#checkout-basket {
+    width: 100%;
     background-repeat: no-repeat;
+}
+#checkout-basket:hover {
+    cursor: pointer;
+}
+#checkout-basket-counter {
+    display: flex;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    width: 25%;
+    height: 25%;
+    background: red;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    line-height: 20px;
+    font-size: 120%;
+    vertical-align: middle;
+    text-align: center;
+    color: white;
+
 }

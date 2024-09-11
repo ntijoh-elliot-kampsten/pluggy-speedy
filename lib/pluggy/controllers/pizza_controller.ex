@@ -16,8 +16,7 @@ defmodule Pluggy.PizzaController do
         nil -> nil
         _ -> User.get(session_user)
       end
-      # lägg senare till: pizzas: "Pizza.all()," i send_resp
-    send_resp(conn, 200, render("pizzas/index", user: current_user))
+    send_resp(conn, 200, render("pizzas/index", pizzas: Pizza.all(), user: current_user))
   end
 
   def show_orders(conn) do
@@ -36,7 +35,8 @@ defmodule Pluggy.PizzaController do
   #render använder eex
   def new(conn), do: send_resp(conn, 200, render("pizzas/new", []))
   def show(conn, id), do: send_resp(conn, 200, render("pizzas/show", pizza: Pizza.get(id)))
-  def edit(conn, id), do: send_resp(conn, 200, render("pizzas/edit", pissa: Pizza.get(id)))
+  def edit(conn, id), do: send_resp(conn, 200, render("pizzas/edit", pizza: Pizza.get(id)))
+  def customize(conn, id), do: send_resp(conn, 200, render("/pizzas/customize", pizza: Pizza.get(id)))
 
   def create(conn, params) do
     Pizzas.create(params)

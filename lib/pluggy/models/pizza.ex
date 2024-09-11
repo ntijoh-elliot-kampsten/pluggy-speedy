@@ -1,5 +1,9 @@
 defmodule Pluggy.Pizza do
-  defstruct(id: nil, name: "", ingredients: [], price: nil)
+
+  defstruct(id: nil, name: "", ingredients: [], price: nil, image_url: "")
+
+
+
 
   alias Pluggy.Pizza
 
@@ -39,11 +43,30 @@ defmodule Pluggy.Pizza do
     Postgrex.query!(DB, "DELETE FROM pizzas WHERE id = $1", [String.to_integer(id)])
   end
 
-  def to_struct([[id, name, ingredients, price]]) do
-    %Pizza{id: id, name: name, ingredients: ingredients, price: price}
+
+  def to_struct([[id, name, ingredients, price, image_url]]) do
+    %Pizza{
+      id: id,
+      name: name,
+      ingredients: parse_ingredients(ingredients),
+      price: price,
+      image_url: image_url
+    }
   end
 
   def to_struct_list(rows) do
-    for [id, name, ingredients, price] <- rows, do: %Pizza{id: id, name: name, ingredients: ingredients, price: price}
-  end
+    for [id, name, ingredients, price, image_url] <- rows do
+      %Pizza{
+        id: id,
+        name: name,
+        ingredients: parse_ingredients(ingredients),
+        price: price,
+        image_url: image_url
+      }
+    end
+
+end
+
+
+  defp parse_ingredients(ingredients) when is_binary(ingredients), do: elem(Code.eval_string(ingredients), 0)
 end
