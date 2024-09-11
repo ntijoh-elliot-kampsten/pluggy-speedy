@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
 	<title>Welcome to Pluggy</title>
 	<link rel="stylesheet" type="text/css" href="/pluggy.css">
+	<link rel="stylesheet" type="text/css" href="/layout.css">
 </head>
 <body>
+    <header>
+        <img id="tonys-pizza-logo" src="/images/tonys-pizza-logo.svg" alt="">
+        <img id="checkout-basket" src="/images/tonys-pizza-basket.svg" alt="" onClick="alert('yo')">
+    </header>
 	<%= template %>
+	<footer></footer>
 </body>
 </html>
