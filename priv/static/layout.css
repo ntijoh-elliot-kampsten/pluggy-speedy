@@ -1,0 +1,14 @@
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+#tonys-pizza-logo {
+    width: 40%;
+}
+#checkout-basket {
+    margin-left: 20px;
+    width: 6%;
+    background-repeat: no-repeat;
+}
