@@ -3,7 +3,7 @@ defmodule Pluggy.PizzaController do
 
   alias Pluggy.Pizza
   alias Pluggy.User
-  import Pluggy.Template, only: [render: 2]
+  import Pluggy.Template, only: [render: 2, render: 3]
   import Plug.Conn, only: [send_resp: 3]
 
   def index(conn) do
@@ -29,7 +29,7 @@ defmodule Pluggy.PizzaController do
     #     _ -> User.get(session_user)
     #   end
     #   # lägg senare till: pizzas: "Pizza.all()," i send_resp
-    send_resp(conn, 200, render("pizzas/show_orders", []))
+    send_resp(conn, 200, render("pizzas/show_orders", [], false))
   end
 
   #render använder eex
