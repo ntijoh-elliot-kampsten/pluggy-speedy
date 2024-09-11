@@ -1,15 +1,11 @@
 defmodule Pluggy.Order do
-  defstruct pizza_id: nil, add: [], sub: [], price: 0, pizza_count: 0, size: 1
+  defstruct [:pizza_id, :add, :sub, :size, :pizza_count, :price]
 
   alias Pluggy.Order
 
   def all do
-    temp = Postgrex.query!(DB, "SELECT * FROM orders", []).rows
-    # |> parse_data
-
-    IO.inspect(temp)
-
-    #temp
+    Postgrex.query!(DB, "SELECT * FROM orders", []).rows
+    |> parse_data
   end
 
   def get(id) do
@@ -38,8 +34,16 @@ defmodule Pluggy.Order do
     Postgrex.query!(DB, "INSERT INTO orders (user_id, user_name, current_order, state) VALUES ($1, $2, $3, $4)", [user_id, user_name, current_order, state])
   end
 
+  @spec delete(binary()) :: Postgrex.Result.t()
   def delete(id) do
     Postgrex.query!(DB, "DELETE FROM orders WHERE id = $1", [String.to_integer(id)])
+  end
+
+  def convert_string_to_list(string) do
+    # Convert the string to a list of structs
+    {list, _bindings} = Code.eval_string(string)
+
+    Enum.map(list, &(&1))
   end
 
   def to_struct([[id, add, sub, price, pizza_count, size]]) do
@@ -47,24 +51,28 @@ defmodule Pluggy.Order do
   end
 
   def parse_data(rows) do
-    #sIO.inspect(Enum.each(rows, &(Enum.at(&1, 3))))
+    # Gets orders and parses it
+    order_list = Enum.map(rows, &(Enum.at(&1, 3)))
+    |> Enum.map(&(convert_string_to_list(&1)))
 
-    Enum.each(rows, &(Enum.at(&1, 0)))
-    |> IO.inspect
+    orders = []
 
+    orders = Enum.map(0..length(rows)-1, fn(index) ->
+      order_map = %{order_id: get_full_order_data(rows, index, 0), user_id: get_full_order_data(rows, index, 1), user_name: get_full_order_data(rows, index, 2), order: get_order_data(order_list, index), state: get_full_order_data(rows, index, 4)}
+    end)
+
+    orders
+  end
+
+  def get_full_order_data(rows, index, map_pos) do
+    Enum.at(Enum.map(rows, &(Enum.at(&1, map_pos))), index)
+  end
+
+  def get_order_data(order_list, index) do
+    Enum.at(order_list, index)
   end
 
   def to_struct_list(rows) do
     for [id, add, sub, price, pizza_count, size] <- rows, do: %Order{pizza_id: id, add: add, sub: sub, price: price, pizza_count: pizza_count, size: size}
-    #"%Order{order: [%{pizza_id: 1, add: ['Svamp'], sub: ['Tomatsås'], size: 1, amount: 2, price: 130}, %{pizza_id: 3, add: ['Basilika'], sub: ['Skinka', 'Svamp'], size: 2, amount: 1, price: 230}]}"
-
-    # [
-    #   [1, 1, "Carl Svensson",
-    #    "%Order{order: [%{pizza_id: 1, add: ['Svamp'], sub: ['Tomatsås'], size: 1, amount: 2, price: 130}]}",
-    #    "Making"],
-    #   [2, -1, "Abdi Svensson",
-    #    "%Order{order: [%{pizza_id: 1, add: ['Svamp'], sub: ['Tomatsås'], size: 1, amount: 2, price: 130}, %{pizza_id: 3, add: ['Basilika'], sub: ['Skinka', 'Svamp'], size: 2, amount: 1, price: 230}]}",
-    #    "Done"]
-    # ]
   end
 end
