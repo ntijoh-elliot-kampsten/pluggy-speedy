@@ -27,9 +27,9 @@ defmodule Mix.Tasks.Seed do
 
   defp seed_data() do
     IO.puts("Seeding data")
-    Postgrex.query!(DB, "INSERT INTO pizzas(name, ingredients_id, price) VALUES($1, $2, $3)", ["Margherita", "[\"Tomatsås\", \"Mozzarella\", \"Basilika\"]", 110], pool: DBConnection.ConnectionPool)
-    Postgrex.query!(DB, "INSERT INTO pizzas(name, ingredients_id, price) VALUES($1, $2, $3)", ["Marinara", "[\"Tomatsås\"]", 110], pool: DBConnection.ConnectionPool)
-    Postgrex.query!(DB, "INSERT INTO pizzas(name, ingredients_id, price) VALUES($1, $2, $3)", ["Prosciutto e funghi", "[\"Tomatsås\", \"Mozzarella\", \"Skinka\", \"Svamp\"]", 120], pool: DBConnection.ConnectionPool)
+    Postgrex.query!(DB, "INSERT INTO pizzas(name, ingredients_id, price, image_url) VALUES($1, $2, $3, $4)", ["Margherita", "[\"Tomatsås\", \"Mozzarella\", \"Basilika\"]", 110, "/uploads/pizzas/margherita.svg"], pool: DBConnection.ConnectionPool)
+    Postgrex.query!(DB, "INSERT INTO pizzas(name, ingredients_id, price, image_url) VALUES($1, $2, $3, $4)", ["Marinara", "[\"Tomatsås\"]", 110, "/uploads/pizzas/marinara.svg"], pool: DBConnection.ConnectionPool)
+    Postgrex.query!(DB, "INSERT INTO pizzas(name, ingredients_id, price, image_url) VALUES($1, $2, $3, $4)", ["Prosciutto e funghi", "[\"Tomatsås\", \"Mozzarella\", \"Skinka\", \"Svamp\"]", 120, "/uploads/pizzas/prosciutto-e-funghi.svg"], pool: DBConnection.ConnectionPool)
 
     Postgrex.query!(DB, "INSERT INTO ingredients(name, price) VALUES($1, $2)", ["Tomatsås", 5], pool: DBConnection.ConnectionPool)
     Postgrex.query!(DB, "INSERT INTO ingredients(name, price) VALUES($1, $2)", ["Mozzarella", 10], pool: DBConnection.ConnectionPool)
