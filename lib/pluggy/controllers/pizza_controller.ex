@@ -2,6 +2,7 @@ defmodule Pluggy.PizzaController do
   require IEx
 
   alias Pluggy.Pizza
+  alias Pluggy.Order
   alias Pluggy.User
   import Pluggy.Template, only: [render: 2, render: 3]
   import Plug.Conn, only: [send_resp: 3]
