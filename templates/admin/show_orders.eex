@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="show_orders_navbar">
+    </div>
+    <div class="show_orders_order_list_container">
+      <ul class="show_orders_order_list">
+        <%= for order <- orders do%>
+          <li class="show_orders_order_item">
+            <div class="show_order_item_collapse_button">&#9660</div>
+            <div class="show_order_item_order_id"><%=order.order_id%></div>
+            <div class="show_order_item_user_name"><%=order.user_name%></div>
+          </li>
+        <%end%>
+      </ul>
+    </div>
+</body>
+</html>
