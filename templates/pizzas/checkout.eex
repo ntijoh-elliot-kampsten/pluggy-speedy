@@ -11,6 +11,7 @@
 
   <h2>Your Current Order</h2>
 
+
   <!-- Check if there are any orders -->
   <%= if Enum.empty?(orders) do %>
     <p>Your cart is empty.</p>
@@ -32,9 +33,27 @@
             </form>
           </li>
         <% end %>
+
+
+  <ul>
+    <%= for order <- orders do %>
+      <%= for pizza <- order.order do %>
+        <li>
+          <div class="pizza-details">
+            <span>Pizza Name:</span> <span><%= pizza.pizza_name %></span> |
+            <span>Amount:</span> <span><%= pizza.amount %></span> |
+            <span>Price:</span> <span>$<%= pizza.price %></span>
+          </div>
+          <form action="/checkout/remove_pizza" method="post" style="display:inline;">
+            <input type="hidden" name="order_id" value="<%= order.order_id %>">
+            <input type="hidden" name="pizza_id" value="<%= pizza.pizza_id %>">
+            <button type="submit" class="remove-button">Remove</button>
+          </form>
+        </li>
       <% end %>
     </ul>
   <% end %>
+
 
   <!-- Display the total amount only if there are orders -->
   <%= if !Enum.empty?(orders) do %>
@@ -42,10 +61,16 @@
   <% end %>
 
   <!-- Form to finalize the order -->
+
+
+  <p>Total Amount: <span id="total-amount">$<%= Float.round(total_amount, 2) %></span></p>
+
+
   <form action="/checkout/finalize" method="post">
     <input type="hidden" name="order_id" value="<%= if !Enum.empty?(orders) do List.first(orders).order_id else "" end %>">
     <button type="submit" <% if Enum.empty?(orders) do %>disabled<% end %> >Complete Order</button>
   </form>
+
 
   <a href="/">Back to Home</a>
 </body>
