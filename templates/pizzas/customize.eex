@@ -1,1 +1,72 @@
-<h1>yippi</h1>
+
+
+
+<div id="customize_grid">
+    <img src="<%= pizza.image_url %>" alt="din pizza" id="customized_pizza">
+    <div id="ingredients_list">
+        <ul id="ingredient_list">
+            <%= for {ingredient, index} <- Enum.with_index(pizza.ingredients) do %>
+                <li data-ingredient="<%= ingredient %>">
+                    <%= ingredient %>
+                    <button class="remove-btn" type="button">-</button>
+                </li>
+            <% end %>
+        </ul>
+    </div>
+</div>
+
+<script>
+// JavaScript to handle the ingredient removal
+document.addEventListener('DOMContentLoaded', () => {
+    // Get the list of ingredients from the server-rendered HTML
+    let ingredients = Array.from(document.querySelectorAll('#ingredient_list li')).map(li => li.dataset.ingredient);
+
+    // Attach event listeners to each remove button
+    document.querySelectorAll('.remove-btn').forEach(button => {
+        button.addEventListener('click', (event) => {
+            // Find the parent <li> element and its ingredient
+            const li = event.target.closest('li');
+            const ingredient = li.dataset.ingredient;
+
+            // Remove the ingredient from the array
+            ingredients = ingredients.filter(item => item !== ingredient);
+
+            // Remove the <li> element from the DOM
+            li.remove();
+
+            // Optionally, update the server or application state with the new ingredient list
+            console.log('Updated ingredients list:', ingredients);
+            // Here you can send the updated list to the server if needed
+        });
+    });
+});
+
+</script>
+
+
+
+
+
+
+
+
+
+<!-- 
+<div id="customize_grid">
+    <img src="<%= pizza.image_url %>" alt="din pizza" id="customized_pizza">
+    <div id="ingredients_list">
+        <ul>
+            <%= for {ingredient, index} <- Enum.with_index(pizza.ingredients) do %>
+                <li>
+                    <%= ingredient %>
+                   <button id="remove_<%= ingredient %>" type="button">-</button>
+                </li>
+            <% end %>
+        </ul>
+    </div>
+</div> -->
+
+
+
+
+

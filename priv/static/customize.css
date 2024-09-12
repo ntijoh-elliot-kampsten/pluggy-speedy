@@ -1,0 +1,24 @@
+*{
+    margin: 0px;
+    padding: 0px;
+
+}
+
+#customized_pizza{
+    background-color: red;
+    width: 10vw;
+    height: auto;
+}
+
+#customize_grid{
+  object-fit: contain;  
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+#ingredients_list{
+    display: flex;
+    flex-direction: column;
+}

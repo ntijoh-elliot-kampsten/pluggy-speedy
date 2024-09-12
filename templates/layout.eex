@@ -6,6 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="/pluggy.css">
 	<link rel="stylesheet" type="text/css" href="/layout.css">
     <link rel="stylesheet" type="text/css" href="/index.css">
+    <link rel="stylesheet" type="text/css" href="/customize.css">
 </head>
 <body>
     <header>

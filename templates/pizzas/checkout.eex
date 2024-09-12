@@ -10,19 +10,7 @@
   
   <h2>Your Current Order</h2>
 
-  <ul>
-    <<%= for order <- @orders do %>
-      <li>
-        Pizza ID: <%= order["pizza_id"] %> | Amount: <%= order["amount"] %> | Price: <%= order["price"] %>
-      </li>
-    <% end %>
-  </ul>
 
-
-  <form action="/checkout/finalize" method="post">
-    <input type="hidden" name="order_id" value="<%= @orders |> List.first() |> Map.get("id") %>">
-    <button type="submit">Complete Order</button>
-  </form>
 
   <a href="/">Back to Home</a>
 </body>
