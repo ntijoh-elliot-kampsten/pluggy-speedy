@@ -33,8 +33,8 @@
             </form>
           </li>
         <% end %>
-
-
+      <% end %>
+ 
   <ul>
     <%= for order <- orders do %>
       <%= for pizza <- order.order do %>
@@ -51,10 +51,11 @@
           </form>
         </li>
       <% end %>
-    </ul>
+    <% end %>
+  </ul>
+  
+
   <% end %>
-
-
   <!-- Display the total amount only if there are orders -->
   <%= if !Enum.empty?(orders) do %>
     <p>Total Amount: <span id="total-amount">$<%= Float.round(total_amount, 2) %></span></p>
@@ -73,5 +74,6 @@
 
 
   <a href="/">Back to Home</a>
+  
 </body>
 </html>
