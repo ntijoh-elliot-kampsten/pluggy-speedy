@@ -10,6 +10,10 @@ defmodule Pluggy.User do
     |> to_struct
   end
 
+  def userExist(user_name), do: Postgrex.query!(DB, "SELECT id FROM users WHERE user_name = $1", [user_name], pool: DBConnection.ConnectionPool).num_rows != 0
+
+  def getUser(user_name), do: Postgrex.query!(DB, "SELECT id, password_hash FROM users WHERE user_name = $1", [user_name], pool: DBConnection.ConnectionPool).first_row
+
   def to_struct([[id, username]]) do
     %User{id: id, username: username}
   end
