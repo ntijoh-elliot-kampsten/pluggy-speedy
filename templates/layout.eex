@@ -9,6 +9,7 @@
 </head>
 <body>
     <header>
+        <img id="user-logo" src="/images/user-logo.png" alt="" onClick="window.location.href = '/login'">
         <img id="tonys-pizza-logo" src="/images/tonys-pizza-logo.svg" alt="" onClick="window.location.href = '/main'">
         <div id="checkout-basket-container">
             <img id="checkout-basket" src="/images/tonys-pizza-basket.svg" alt="" onClick="window.location.href = '/checkout'">

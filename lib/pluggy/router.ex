@@ -2,6 +2,7 @@ defmodule Pluggy.Router do
   use Plug.Router
   use Plug.Debugger
 
+  alias Pluggy.Order
   alias Pluggy.OrderController
   alias Pluggy.PizzaController
   alias Pluggy.UserController
@@ -27,7 +28,11 @@ defmodule Pluggy.Router do
 
   get("/", do: PizzaController.index(conn))
   get("/main", do: PizzaController.index(conn))
+
   get("/orders", do: OrderController.show_orders(conn))
+  post("/order/add", do: OrderController.create(conn, conn.body_params))
+  get("/order/update", do: Order.update_order("Carl Svensson"))
+
   get("/customize/:id", do: PizzaController.customize(conn, id))
 
   get("/checkout", do: CheckoutController.index(conn))

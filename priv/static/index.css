@@ -1,0 +1,57 @@
+#pizza-list-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+#pizza-list {
+    display: grid;
+    width: 40vw;
+    grid-template-columns: auto auto;
+}
+div.pizza-list-item {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+img.pizza-image {
+    width: 40%;
+    margin-right: 15px;
+}
+div.pizza-content {
+    width: 40%;
+}
+div.pizza-main-content-container {
+    display: block;
+}
+div.pizza-size-content-container {
+    display: none;
+}
+button.pizza-positive-button {
+    padding: 2% 5%;
+    border: none;
+    border-radius: 20%;
+    background-color: rgb(101, 170, 80);
+}
+button.pizza-positive-button:hover {
+    cursor: pointer;
+}
+button.pizza-middle-button {
+    padding: 2% 5%;
+    border: none;
+    border-radius: 20%;
+    background-color: rgb(252, 237, 200);
+}
+button.pizza-middle-button {
+    cursor: pointer;
+}
+button.pizza-negative-button {
+    padding: 2% 5%;
+    border: none;
+    border-radius: 20%;
+    background-color: rgb(213, 66, 67);
+}
+button.pizza-negative-button {
+    cursor: pointer;
+}

@@ -7,7 +7,7 @@ defmodule Pluggy.UserController do
     user_name = params["username"]
     password = params["pwd"]
 
-    user = User.getUser(user_name)
+    user = User.get_user(user_name)
 
     cond do
       # no user with that username
@@ -38,7 +38,7 @@ defmodule Pluggy.UserController do
     number = Integer.parse(params["number"])
     mail = params["mail"]
 
-    case User.userExist(user_name) do
+    case User.user_exist(user_name) do
       # no user with that username
       false ->
         Postgrex.query!(DB, "INSERT INTO users(name, password, number, mail, is_admin) VALUES($1, $2, $3, $4, $5)", [user_name, hashed_password, number, mail, false], pool: DBConnection.ConnectionPool)

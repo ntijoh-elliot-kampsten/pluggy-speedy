@@ -1,1 +1,84 @@
-<h1>test</h1>
+<div id="pizza-list-container">
+    <div id="pizza-list">
+        <%= for pizza <- pizzas do %>
+        <div id="pizza-item-<%= pizza.id %>" class="pizza-list-item">
+            <img class="pizza-image" src="<%= pizza.image_url %>" alt="">
+            <div class="pizza-content">
+                <div class="pizza-main-content-container">
+                    <p><strong><%= pizza.name %></strong></p>
+                    <%= for ingredient <- pizza.ingredients do %>
+                    <p><%= ingredient %></p>
+                    <% end %>
+                    <div class="pizza-button-container">
+                        <button class="pizza-middle-button" onclick="window.location.href = '/customize/<%= pizza.id %>'">Anpassa</button>
+                        <button class="pizza-positive-button" onclick="showBuy('<%= pizza.id %>')">Välj storlek</button>
+                    </div>
+                </div>
+                <div class="pizza-size-content-container">
+                    <p><strong><%= pizza.name %></strong></p>
+                    <label class="pizza-size-radio">
+                        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-1-<%= pizza.id %>" value="1" checked> Small
+                    </label> 
+                    <br/>
+                    <label class="pizza-size-radio">
+                        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-2-<%= pizza.id %>" value="2"> Medium
+                    </label>
+                    <br/>
+                    <label class="pizza-size-radio">
+                        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-3-<%= pizza.id %>" value="3"> Large
+                    </label>
+                    <br/>
+                    <br/>
+                    <button class="pizza-negative-button" onclick="showBuy('<%= pizza.id %>')">Avbryt</button>
+                    <button class="pizza-positive-button" onclick="buy('<%= pizza.id %>', '<%= pizza.name %>')">Köp</button>
+                </div>
+            </div>
+        </div>
+        <% end %>
+    </div>
+</div>
+
+<form id="order-form" action="/order/add" method="POST" style="display: none;">
+    <input type="hidden" name="pizzaId" id="pizzaId">
+    <input type="hidden" name="size" id="size">
+    <input type="hidden" name="amount" id="amount">
+    <input type="hidden" name="add" id="add">
+    <input type="hidden" name="sub" id="sub">
+</form>
+
+<script>
+    function getSelectedPizzaSize(pizzaId) {
+        const selectedRadio = document.querySelector(`input[name="pizza-size-${pizzaId}"]:checked`);
+        if (selectedRadio) {
+            return selectedRadio.value;
+        }
+        return null;
+    }
+
+    function showBuy(id) {
+        var buyContainer = document.getElementById("pizza-item-" + id);
+        var pizzaMainContentContainer = buyContainer.querySelector('.pizza-main-content-container');
+        var pizzaSizeContentContainer = buyContainer.querySelector('.pizza-size-content-container');
+        
+        if (pizzaSizeContentContainer.style.display == "none" || pizzaSizeContentContainer.style.display === "") {
+            pizzaMainContentContainer.style.display = "none"
+            pizzaSizeContentContainer.style.display = "block"
+        }
+        else {
+            pizzaSizeContentContainer.style.display = "none"
+            pizzaMainContentContainer.style.display = "block"
+        }
+    }
+
+    function buy(pizzaId, pizzaName) {
+        var form = document.getElementById('order-form');
+        document.getElementById('pizzaId').value = pizzaId;
+        document.getElementById('size').value = getSelectedPizzaSize(pizzaId);
+        document.getElementById('amount').value = 1; // Set default count or dynamically set it
+        document.getElementById('add').value = [].join("&&&&")
+        document.getElementById('sub').value = [].join("&&&&")
+
+        // Submit the form like a normal POST
+        form.submit();
+    }
+</script>
