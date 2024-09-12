@@ -6,6 +6,7 @@ defmodule Pluggy.Order do
   def all do
     Postgrex.query!(DB, "SELECT * FROM orders", []).rows
     |> parse_data
+    |> IO.inspect
   end
 
   def get(id) do
@@ -67,7 +68,21 @@ defmodule Pluggy.Order do
   end
 
   def get_order_data(order_list, index) do
-    Enum.at(order_list, index)
+    order_map = Enum.at(order_list, index)
+
+    return_value = Enum.map(0..length(order_map)-1, fn(k) ->
+      orders = Enum.at(order_map, k)
+      pizza_id = orders.pizza_id
+
+      query = """
+      SELECT name FROM pizzas WHERE id = $1
+      """
+
+      pizza_name = Postgrex.query!(DB, query, [pizza_id]).rows
+      Map.put(orders, :pizza_name, Enum.at(Enum.at(pizza_name, 0), 0))
+    end)
+
+    return_value
   end
 
   def to_struct_list(rows) do
