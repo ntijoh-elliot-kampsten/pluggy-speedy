@@ -19,19 +19,6 @@ defmodule Pluggy.PizzaController do
     send_resp(conn, 200, render("pizzas/index", pizzas: Pizza.all(), user: current_user))
   end
 
-  def show_orders(conn) do
-    # # get user if logged in
-    # session_user = conn.private.plug_session["user_id"]
-
-    # current_user =
-    #   case session_user do
-    #     nil -> send_resp(conn, 200, render("pizzas/index", user: nil))
-    #     _ -> User.get(session_user)
-    #   end
-    #   # lägg senare till: pizzas: "Pizza.all()," i send_resp
-    send_resp(conn, 200, render("pizzas/show_orders", [order: Order.all()], false))
-  end
-
   #render använder eex
   def new(conn), do: send_resp(conn, 200, render("pizzas/new", []))
   def show(conn, id), do: send_resp(conn, 200, render("pizzas/show", pizza: Pizza.get(id)))
