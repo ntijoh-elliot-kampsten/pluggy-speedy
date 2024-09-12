@@ -6,6 +6,7 @@ defmodule Pluggy.Order do
   def all do
     Postgrex.query!(DB, "SELECT * FROM orders", []).rows
     |> parse_data
+    |> IO.inspect
   end
 
   def get(id) do
@@ -55,10 +56,8 @@ defmodule Pluggy.Order do
     order_list = Enum.map(rows, &(Enum.at(&1, 3)))
     |> Enum.map(&(convert_string_to_list(&1)))
 
-    orders = []
-
     orders = Enum.map(0..length(rows)-1, fn(index) ->
-      order_map = %{order_id: get_full_order_data(rows, index, 0), user_id: get_full_order_data(rows, index, 1), user_name: get_full_order_data(rows, index, 2), order: get_order_data(order_list, index), state: get_full_order_data(rows, index, 4)}
+      %{order_id: get_full_order_data(rows, index, 0), user_id: get_full_order_data(rows, index, 1), user_name: get_full_order_data(rows, index, 2), order: get_order_data(order_list, index), state: get_full_order_data(rows, index, 4)}
     end)
 
     orders
