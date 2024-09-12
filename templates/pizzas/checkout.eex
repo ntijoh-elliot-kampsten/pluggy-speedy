@@ -11,8 +11,7 @@
 
   <h2>Your Current Order</h2>
 
-<<<<<<< HEAD
-=======
+
   <ul>
     <%= for order <- orders do %>
       <%= for pizza <- order.order do %>
@@ -31,18 +30,17 @@
       <% end %>
     <% end %>
   </ul>
->>>>>>> 9a217d9f922b1fd06964f4cd0c8cf2fa72d668c7
+
 
   <p>Total Amount: <span id="total-amount">$<%= Float.round(total_amount, 2) %></span></p>
 
-<<<<<<< HEAD
-=======
+
   <form action="/checkout/finalize" method="post">
     <input type="hidden" name="order_id" value="<%= if orders != [] do List.first(orders).order_id else "" end %>">
     <button type="submit">Complete Order</button>
   </form>
 
->>>>>>> 9a217d9f922b1fd06964f4cd0c8cf2fa72d668c7
+
   <a href="/">Back to Home</a>
 </body>
 </html>
