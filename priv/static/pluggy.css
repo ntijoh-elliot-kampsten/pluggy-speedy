@@ -8,8 +8,6 @@ body {
 .show-orders-order-list-container {
     background-color: #1B263B;
     padding: 10px;
-    margin: 10px;
-    border-radius: 5px;
 }
 
 .show-orders-order-list {
@@ -20,18 +18,19 @@ body {
 .show-orders-order-item {
     background-color: #415A77;
     display: flex;
-    margin: 5px;
+    margin: 5px 5px 0px 5px;
     border: solid #0D1B2A 2px;
     border-radius: 10px;
 }
 
-.show-orders-order-item * {
-    display: inline-flex;
+.show-orders-order-item > span {
+    /* display: inline-flex; */
     justify-content: space-between;
     padding: 10px;
     border-right: solid #0D1B2A 2px;
     color: #E0E1DD;
     font-weight: bold;
+    margin: 0;
 }
 
 .show-order-item-collapse-button:hover {
@@ -41,4 +40,22 @@ body {
 .collapsible-content {
     display: none;
     overflow: hidden;
+    background-color: #415A77;
+    border: solid #0D1B2A 2px;
+    border-top: none;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    margin: 0px 5px 5px 5px;
 }
+
+.show-order-item-collapse-button:after {
+    content: '\25BC';
+    color: white;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+  }
+  
+  .active:after {
+    content: "\25B2";
+  }

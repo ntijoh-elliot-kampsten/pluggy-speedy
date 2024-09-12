@@ -10,39 +10,61 @@
     </div>
     <div class="show-orders-order-list-container">
       <ul class="show-orders-order-list">
-        <%= for order <- orders do%>
-          <li class="show-orders-order-item">
-            <div class="show-order-item-collapse-button">&#9660</div>
-            <div class="show-order-item-order-id"><%=order.order_id%></div>
-            <div class="show-order-item-user-name"><%=order.user_name%></div>
+        <%= for {order, index} <- Enum.with_index(orders) do%>
+          <li class="show-orders-order-item" id=<%="order-item#{index}"%>>
+            <span class="show-order-item-collapse-button" id=<%="#{index}"%>></span>
+            <span class="show-order-item-order-id"><%=order.order_id%></span>
+            <span class="show-order-item-user-name"><%=order.user_name%></span>
             <%= for pizzas <- order.order do%>
-              <div class="show-order-item-pizza-name"><%=pizzas.pizza_name%></div>
+              <span class="show-order-item-pizza-name"><%=pizzas.pizza_name%></span>
             <% end%>
-            <div class="show-order-item-price">340 kr</div>
-            <div class="show-order-item-state"><%= order.state%></div>
-            <div class="collapsible-content" id="collapsible-content">
-              <p>test</p>
-            </div>
+            <span class="show-order-item-price">340 kr</span>
+            <span class="show-order-item-state"><%= order.state%></span>
           </li>
+          <div class="collapsible-content" id=<%="collapsible-content#{index}"%>>
+            <%= for pizzas <- order.order do%>
+            <ul>
+              <li>
+                Pizza: <%=pizzas.pizza_name%>
+                <%= for adds <- pizzas.add do%>
+                <p>+ <%=adds%></p>
+                <% end%>
+                <%= for subs <- pizzas.sub do%>
+                <p>- <%=subs%></p>
+                <% end%>
+              </li>
+            </ul>
+            <% end%>
+          </div>
         <%end%>
       </ul>
     </div>
 </body>
 <script>
-var coll = document.getElementsByClassName("show-order-item-collapse-button");
-var content_element = document.getElementById("collapsible-content")
-var i;
+// Select all divs with the class "show-order-item-collapse-button"
+const buttonDivs = document.querySelectorAll('.show-order-item-collapse-button');
 
-for (i = 0; i < coll.length; i++) {
-  coll[i].addEventListener("click", function() {
+// Add a click event listener to each button-like div
+buttonDivs.forEach(div => {
+  div.addEventListener('click', function(event) {
+    // Get the clicked div (this is the div that was clicked)
+    const clickedDiv = event.currentTarget;
+
     this.classList.toggle("active");
-    var content = content_element;
-    if (content.style.display === "block") {
+    var content = document.getElementById("collapsible-content"+clickedDiv.id);
+    var list_item = document.getElementById("order-item"+clickedDiv.id)
+    if (content.style.display === "flex") {
       content.style.display = "none";
+
+      list_item.style.borderBottomLeftRadius = "10px";
+      list_item.style.borderBottomRightRadius = "10px";
     } else {
-      content.style.display = "block";
+      content.style.display = "flex";
+
+      list_item.style.borderBottomLeftRadius = "0px";
+      list_item.style.borderBottomRightRadius = "0px";
     }
   });
-}
+});
 </script>
 </html>
