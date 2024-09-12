@@ -39,8 +39,8 @@ defmodule Mix.Tasks.Seed do
 
     Postgrex.query!(DB, "INSERT INTO users(name, number, mail, is_admin) VALUES($1, $2, $3, $4)", ["Carl Svensson", 0123456789, "", false], pool: DBConnection.ConnectionPool)
 
-    Postgrex.query!(DB, "INSERT INTO orders(user_id, user_name, current_order, state) VALUES($1, $2, $3, $4)", [1, "Carl Svensson", "[%{pizza_id: 1, add: ['Svamp'], sub: ['Tomatsås'], size: 1, amount: 2, price: 130}]", "Making"], pool: DBConnection.ConnectionPool)
-    Postgrex.query!(DB, "INSERT INTO orders(user_id, user_name, current_order, state) VALUES($1, $2, $3, $4)", [-1, "Abdi Svensson", "[%{pizza_id: 1, add: ['Svamp'], sub: ['Tomatsås'], size: 1, amount: 2, price: 130}, %{pizza_id: 3, add: ['Basilika'], sub: ['Skinka', 'Svamp'], size: 2, amount: 1, price: 230}]", "Done"], pool: DBConnection.ConnectionPool)
+    Postgrex.query!(DB, "INSERT INTO orders(user_id, user_name, current_order, state) VALUES($1, $2, $3, $4)", [1, "Carl Svensson", "[%{pizza_id: 1, add: [\"Svamp\"], sub: [\"Tomatsås\"], size: 1, amount: 2, price: 130}]", "Making"], pool: DBConnection.ConnectionPool)
+    Postgrex.query!(DB, "INSERT INTO orders(user_id, user_name, current_order, state) VALUES($1, $2, $3, $4)", [-1, "Abdi Svensson", "[%{pizza_id: 1, add: [\"Svamp\"], sub: [\"Tomatsås\"], size: 1, amount: 2, price: 130}, %{pizza_id: 3, add: [\"Basilika\"], sub: [\"Skinka\", \"Svamp\"], size: 2, amount: 1, price: 230}]", "Done"], pool: DBConnection.ConnectionPool)
   end
 
 end
