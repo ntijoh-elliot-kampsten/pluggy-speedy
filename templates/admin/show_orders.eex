@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="../pluggy.css">
+</head>
+<body>
+    <div class="show-orders-navbar">
+    </div>
+    <div class="show-orders-order-list-container">
+      <ul class="show-orders-order-list">
+        <%= for order <- orders do%>
+          <li class="show-orders-order-item">
+            <div class="show-order-item-collapse-button">&#9660</div>
+            <div class="show-order-item-order-id"><%=order.order_id%></div>
+            <div class="show-order-item-user-name"><%=order.user_name%></div>
+            <%= for pizzas <- order.order do%>
+              <div class="show-order-item-pizza-name"><%=pizzas.pizza_name%></div>
+            <% end%>
+            <div class="show-order-item-price">340 kr</div>
+            <div class="show-order-item-state"><%= order.state%></div>
+            <div class="collapsible-content" id="collapsible-content">
+              <p>test</p>
+            </div>
+          </li>
+        <%end%>
+      </ul>
+    </div>
+</body>
+<script>
+var coll = document.getElementsByClassName("show-order-item-collapse-button");
+var content_element = document.getElementById("collapsible-content")
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = content_element;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+</script>
+</html>

@@ -1,48 +1,55 @@
 defmodule Pluggy.UserController do
   # import Pluggy.Template, only: [render: 2] #det här exemplet renderar inga templates
   import Plug.Conn, only: [send_resp: 3]
+  alias Pluggy.User
 
   def login(conn, params) do
-    username = params["username"]
+    user_name = params["username"]
     password = params["pwd"]
 
-     #Bör antagligen flytta SQL-anropet till user-model (t.ex User.find)
-    result =
-      Postgrex.query!(DB, "SELECT id, password_hash FROM users WHERE username = $1", [username],
-        pool: DBConnection.ConnectionPool
-      )
+    user = User.get_user(user_name)
 
-    case result.num_rows do
+    cond do
       # no user with that username
-      0 ->
-        redirect(conn, "/fruits")
+      user.num_rows == 0 ->
+        redirect(conn, "/login")
       # user with that username exists
-      _ ->
-        [[id, password_hash]] = result.rows
+      true ->
+        [id, password_hash] = user
 
         # make sure password is correct
         if Bcrypt.verify_pass(password, password_hash) do
           Plug.Conn.put_session(conn, :user_id, id)
-          |> redirect("/fruits") #skicka vidare modifierad conn
+          |> redirect("/main") #skicka vidare modifierad conn
         else
-          redirect(conn, "/fruits")
+          redirect(conn, "/login")
         end
     end
   end
 
   def logout(conn) do
     Plug.Conn.configure_session(conn, drop: true) #tömmer sessionen
-    |> redirect("/fruits")
+    |> redirect("/main")
   end
 
-  # def create(conn, params) do
-  # 	#pseudocode
-  # 	# in db table users with password_hash CHAR(60)
-  # 	# hashed_password = Bcrypt.hash_pwd_salt(params["password"])
-  #  	# Postgrex.query!(DB, "INSERT INTO users (username, password_hash) VALUES ($1, $2)", [params["username"], hashed_password], [pool: DBConnection.ConnectionPool])
-  #  	# redirect(conn, "/fruits")
-  # end
+  def signUp(conn, params) do
+    user_name = params["username"]
+    hashed_password = Bcrypt.hash_pwd_salt(params["pwd"])
+    number = Integer.parse(params["number"])
+    mail = params["mail"]
+
+    case User.user_exist(user_name) do
+      # no user with that username
+      false ->
+        Postgrex.query!(DB, "INSERT INTO users(name, password, number, mail, is_admin) VALUES($1, $2, $3, $4, $5)", [user_name, hashed_password, number, mail, false], pool: DBConnection.ConnectionPool)
+        redirect(conn, "/main")
+      true -> redirect(conn, "/login")
+      _ -> redirect(conn, "/login")
+    end
+  end
 
   defp redirect(conn, url),
     do: Plug.Conn.put_resp_header(conn, "location", url) |> send_resp(303, "")
+
+
 end

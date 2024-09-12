@@ -1,11 +1,8 @@
 defmodule Pluggy.Pizza do
-
   defstruct(id: nil, name: "", ingredients: [], price: nil, image_url: "")
 
-
-
-
   alias Pluggy.Pizza
+  alias Pluggy.Ingredient
 
   def all do
     Postgrex.query!(DB, "SELECT * FROM pizzas", []).rows
@@ -43,6 +40,15 @@ defmodule Pluggy.Pizza do
     Postgrex.query!(DB, "DELETE FROM pizzas WHERE id = $1", [String.to_integer(id)])
   end
 
+  def calculate_price(id, add \\ []) do
+    base_price = get(id).price
+    ingredients_price = calculate_ingredients_price(add)
+    base_price + ingredients_price
+  end
+
+  def calculate_ingredients_price(_, price \\ 0)
+  def calculate_ingredients_price([], price), do: price
+  def calculate_ingredients_price([head|tail], price), do: calculate_ingredients_price(tail, price + (Ingredient.get_by_name(head).price || 0))
 
   def to_struct([[id, name, ingredients, price, image_url]]) do
     %Pizza{
@@ -65,8 +71,7 @@ defmodule Pluggy.Pizza do
       }
     end
 
-end
-
+  end
 
   defp parse_ingredients(ingredients) when is_binary(ingredients), do: elem(Code.eval_string(ingredients), 0)
 end
