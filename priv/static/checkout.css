@@ -1,0 +1,128 @@
+/* General body styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f3e7;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  
+  /* Main Heading */
+  h1 {
+    text-align: center;
+    color: #27ae60;
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+  
+  /* Sub Heading */
+  h2 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 2rem;
+    text-align: center;
+  }
+  
+  /* Order List Styles */
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+  }
+  
+  li {
+    background-color: #fdfdfd;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    color: #555;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Flex container for pizza details */
+  .pizza-details {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    font-size: 1rem;
+  }
+  
+  .pizza-details span {
+    margin-right: 10px;
+    font-weight: bold;
+  }
+  
+  /* Remove button style */
+  .remove-button {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+  }
+  
+  .remove-button:hover {
+    background-color: #c0392b;
+  }
+  
+  /* Total Amount Styling */
+  #total-amount {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2rem;
+  }
+  
+  /* Form Button Styles */
+  button {
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 20px auto;
+  }
+  
+  button:hover {
+    background-color: #d35400;
+  }
+  
+  /* Link to go back home */
+  a {
+    display: block;
+    text-align: center;
+    color: #2980b9;
+    text-decoration: none;
+    margin-top: 20px;
+    font-size: 1.1rem;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 2.5rem;
+    }
+  
+    h2 {
+      font-size: 1.8rem;
+    }
+  
+    button {
+      width: 100%;
+    }
+  }
+  

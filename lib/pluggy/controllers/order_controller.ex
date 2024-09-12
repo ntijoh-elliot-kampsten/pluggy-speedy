@@ -30,12 +30,7 @@ defmodule Pluggy.OrderController do
   # def customize(conn, id), do: send_resp(conn, 200, render("/pizzas/customize", pizza: Pizza.get(id)))
 
   def create(conn, params) do
-    Order.create(params)
-    case params["file"] do
-      nil -> IO.puts("No file uploaded")  #do nothing
-        # move uploaded file from tmp-folder
-      _  -> File.rename(params["file"].path, "priv/static/uploads/pizzas/#{params["file"].filename}")
-    end
+    Order.create(conn, params)
     redirect(conn, "/main")
   end
 

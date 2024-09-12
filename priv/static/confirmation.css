@@ -1,0 +1,93 @@
+/* General body styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f3e7;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  
+  /* Main Heading */
+  h1 {
+    text-align: center;
+    color: #27ae60;
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+  
+  /* Confirmation Message Styling */
+  .confirmation-message {
+    background-color: #ecf9f1;
+    padding: 20px;
+    border: 2px solid #27ae60;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 20px 0;
+    font-size: 1.2rem;
+    color: #2c3e50;
+  }
+  
+  /* Order Details Styling */
+  .order-details {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+    color: #555;
+    font-size: 1.1rem;
+  }
+  
+  .order-details span {
+    font-weight: bold;
+    color: #e74c3c;
+  }
+  
+  /* Button Styles */
+  button {
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 20px auto;
+  }
+  
+  button:hover {
+    background-color: #d35400;
+  }
+  
+  /* Link to go back home */
+  a {
+    display: block;
+    text-align: center;
+    color: #2980b9;
+    text-decoration: none;
+    margin-top: 20px;
+    font-size: 1.1rem;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 2.5rem;
+    }
+  
+    .confirmation-message {
+      font-size: 1rem;
+    }
+  
+    button {
+      width: 100%;
+    }
+  }
+  

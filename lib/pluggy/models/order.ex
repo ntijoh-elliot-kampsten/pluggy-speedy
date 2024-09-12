@@ -2,6 +2,7 @@ defmodule Pluggy.Order do
   defstruct [:pizza_id, :add, :sub, :size, :pizza_count, :price]
 
   alias Pluggy.Order
+  alias Pluggy.Pizza
 
   def all do
     Postgrex.query!(DB, "SELECT * FROM orders", []).rows
@@ -14,25 +15,92 @@ defmodule Pluggy.Order do
     |> to_struct
   end
 
-  def update(id, params) do
-    state = params["state"]
-    id = String.to_integer(id)
+  def update_order(conn, params) do
+    user_name = "Carl Svensson"
+    IO.puts(user_name)
 
+    current_order = Enum.at(get_user_unsubmitted_order(user_name), 0).order
+
+    IO.inspect(current_order)
+
+    order = %{
+      pizza_id: String.to_integer(params["pizzaId"]),
+      size: String.to_integer(params["size"]),
+      amount: String.to_integer(params["amount"]),
+      add: if params["add"] && params["add"] != "" do
+        String.split(params["add"], "&&&&")
+      else
+        []
+      end,
+      sub: if params["sub"] && params["sub"] != "" do
+        String.split(params["sub"], "&&&&")
+      else
+        []
+      end,
+      price: Pizza.calculate_price(params["pizzaId"], if params["add"] && params["add"] != "" do
+        String.split(params["add"], "&&&&")
+      else
+        []
+      end)
+    }
+
+    new_order = [order | current_order]
+
+    IO.inspect(convert_list_to_string(new_order))
+
+    # Insert the new updated order into the database
     Postgrex.query!(
       DB,
-      "UPDATE orders SET state = $1, WHERE id = $2",
-      [state, id]
+      "UPDATE orders SET \"current_order\" = $1 WHERE user_name = $2 AND state = ''",
+      [convert_list_to_string(new_order), user_name]
     )
   end
 
-  def create(params) do
-    user_id = params["user_id"]
-    user_name = params["user_name"]
-    current_order = params["current_order"]
-    state = "Making"
+  def update_state() do
 
-    Postgrex.query!(DB, "INSERT INTO orders (user_id, user_name, current_order, state) VALUES ($1, $2, $3, $4)", [user_id, user_name, current_order, state])
   end
+
+  def create(conn, params) do
+    user_id = 1
+    user_name = "Carl Svensson"
+
+    cond do
+      user_unsubmitted_order_exist(user_name) ->
+        update_order(conn, params)
+      true ->
+        # Create the order map and handle empty "add" and "sub" fields using atoms instead of strings
+        order = %{
+          pizza_id: String.to_integer(params["pizzaId"]),
+          size: String.to_integer(params["size"]),
+          amount: String.to_integer(params["amount"]),
+          add: if params["add"] && params["add"] != "" do
+            String.split(params["add"], "&&&&")
+          else
+            []
+          end,
+          sub: if params["sub"] && params["sub"] != "" do
+            String.split(params["sub"], "&&&&")
+          else
+            []
+          end,
+          price: Pizza.calculate_price(params["pizzaId"], if params["add"] && params["add"] != "" do
+            String.split(params["add"], "&&&&")
+          else
+            []
+          end)
+        }
+
+        state = ""
+
+        # Insert the order into the database
+        Postgrex.query!(
+          DB,
+          "INSERT INTO orders (user_id, user_name, current_order, state) VALUES ($1, $2, $3, $4)",
+          [user_id, user_name, convert_list_to_string([order]), state]
+        )
+    end
+  end
+
 
   @spec delete(binary()) :: Postgrex.Result.t()
   def delete(id) do
@@ -46,7 +114,12 @@ defmodule Pluggy.Order do
     Enum.map(list, &(&1))
   end
 
-  def to_struct([[id, add, sub, price, pizza_count, size]]) do
+  def convert_list_to_string(list) do
+    # Convert the list of maps/structs to a string that matches PostgreSQL's format
+    inspect(list, charlists: :as_lists)
+  end
+
+  def to_struct([id, add, sub, price, pizza_count, size]) do
     %Order{pizza_id: id, add: add, sub: sub, price: price, pizza_count: pizza_count, size: size}
   end
 
@@ -87,4 +160,8 @@ defmodule Pluggy.Order do
   def to_struct_list(rows) do
     for [id, add, sub, price, pizza_count, size] <- rows, do: %Order{pizza_id: id, add: add, sub: sub, price: price, pizza_count: pizza_count, size: size}
   end
+
+  def get_user_unsubmitted_order(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).rows |> parse_data
+
+  def user_unsubmitted_order_exist(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).num_rows != 0
 end

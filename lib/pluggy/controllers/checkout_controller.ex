@@ -4,7 +4,7 @@ defmodule Pluggy.CheckoutController do
   alias Pluggy.Checkout
   alias Pluggy.User
   import Pluggy.Template, only: [render: 2]
-  import Plug.Conn, only: [send_resp: 3]
+  import Plug.Conn, only: [send_resp: 3, put_resp_content_type: 2]
 
   def index(conn) do
     session_user = conn.private.plug_session["user_id"]
@@ -15,23 +15,69 @@ defmodule Pluggy.CheckoutController do
         _ -> User.get(session_user)
       end
 
-    orders = Checkout.get_current_order(session_user)
+    orders = Pluggy.Checkout.get_current_order(1)
 
-    send_resp(conn, 200, render("pizzas/checkout", user: current_user, orders: orders))
-  end
+    total_amount =
+      orders
+      |> Enum.flat_map(& &1.order)
+      |> Enum.reduce(0.0, fn pizza, acc ->
+        acc + pizza.amount * pizza.price
+      end)
 
-  def create(conn, params) do
-    Checkout.create(params)
-    case params["file"] do
-      nil -> IO.puts("No file uploaded")
-      _ -> File.rename(params["file"].path, "priv/static/uploads/pizzas/#{params["file"].filename}")
-    end
-    redirect(conn, "/main")
+    send_resp(conn, 200, Pluggy.Template.render("pizzas/checkout", user: current_user, orders: orders, total_amount: total_amount))
   end
 
   def finalize(conn, %{"order_id" => order_id}) do
-    Checkout.finalize_order(order_id)
-    redirect(conn, "/order_confirmation")
+    IO.inspect(order_id, label: "Received Order ID")
+
+    case Integer.parse(order_id) do
+      {order_id_int, _} ->
+        Checkout.finalize_order(order_id_int)
+        redirect(conn, "/order_confirmation")
+
+      :error ->
+        IO.puts("Invalid order ID received: #{order_id}")
+        send_resp(conn, 400, "Invalid order ID")
+    end
+  end
+
+  def confirmation(conn) do
+    session_user = conn.private.plug_session["user_id"]
+
+    current_user =
+      case session_user do
+        nil -> nil
+        _ -> User.get(session_user)
+      end
+
+    orders = Pluggy.Checkout.get_current_order(1)
+
+    total_amount =
+      orders
+      |> Enum.flat_map(& &1.order)
+      |> Enum.reduce(0.0, fn pizza, acc ->
+        acc + pizza.amount * pizza.price
+      end)
+
+    send_resp(
+      conn,
+      200,
+      Pluggy.Template.render("pizzas/confirmation", user: current_user, orders: orders, total_amount: total_amount)
+    )
+  end
+
+  def remove_pizza(conn, %{"order_id" => order_id, "pizza_id" => pizza_id}) do
+    IO.inspect({order_id, pizza_id}, label: "Remove Pizza")
+
+    case {Integer.parse(order_id), Integer.parse(pizza_id)} do
+      {{order_id_int, _}, {pizza_id_int, _}} ->
+        Checkout.remove_pizza(order_id_int, pizza_id_int)
+        redirect(conn, "/checkout")
+
+      _ ->
+        IO.puts("Invalid order ID or pizza ID")
+        send_resp(conn, 400, "Invalid request")
+    end
   end
 
   defp redirect(conn, url) do
