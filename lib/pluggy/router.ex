@@ -37,6 +37,7 @@ defmodule Pluggy.Router do
 
   get("/checkout", do: CheckoutController.index(conn))
   post("/checkout/finalize", do: CheckoutController.finalize(conn, conn.body_params))
+  get("/order_confirmation", do: CheckoutController.confirmation(conn))
     # get("/fruits", do: FruitController.index(conn))
   # get("/fruits/new", do: FruitController.new(conn))
   # get("/fruits/:id", do: FruitController.show(conn, id))
