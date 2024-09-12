@@ -15,7 +15,7 @@ defmodule Pluggy.CheckoutController do
         _ -> User.get(session_user)
       end
 
-    orders = Pluggy.Checkout.get_current_order(-1)
+    orders = Pluggy.Checkout.get_current_order(1)
 
     total_amount =
       orders
@@ -50,7 +50,7 @@ defmodule Pluggy.CheckoutController do
         _ -> User.get(session_user)
       end
 
-    orders = Pluggy.Checkout.get_current_order(-1)
+    orders = Pluggy.Checkout.get_current_order(1)
 
     total_amount =
       orders
