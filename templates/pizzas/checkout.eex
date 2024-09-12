@@ -4,23 +4,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout</title>
+  <link rel="stylesheet" href="checkout.css">
 </head>
 <body>
   <h1>Checkout</h1>
-  
+
   <h2>Your Current Order</h2>
 
   <ul>
-    <<%= for order <- @orders do %>
-      <li>
-        Pizza ID: <%= order["pizza_id"] %> | Amount: <%= order["amount"] %> | Price: <%= order["price"] %>
-      </li>
+    <%= for order <- orders do %>
+      <%= for pizza <- order.order do %>
+        <li>
+          <div class="pizza-details">
+            <span>Pizza Name:</span> <span><%= pizza.pizza_name %></span> |
+            <span>Amount:</span> <span><%= pizza.amount %></span> |
+            <span>Price:</span> <span>$<%= pizza.price %></span>
+          </div>
+          <form action="/checkout/remove_pizza" method="post" style="display:inline;">
+            <input type="hidden" name="order_id" value="<%= order.order_id %>">
+            <input type="hidden" name="pizza_id" value="<%= pizza.pizza_id %>">
+            <button type="submit" class="remove-button">Remove</button>
+          </form>
+        </li>
+      <% end %>
     <% end %>
   </ul>
 
+  <p>Total Amount: <span id="total-amount">$<%= Float.round(total_amount, 2) %></span></p>
 
   <form action="/checkout/finalize" method="post">
-    <input type="hidden" name="order_id" value="<%= @orders |> List.first() |> Map.get("id") %>">
+    <input type="hidden" name="order_id" value="<%= if orders != [] do List.first(orders).order_id else "" end %>">
     <button type="submit">Complete Order</button>
   </form>
 
