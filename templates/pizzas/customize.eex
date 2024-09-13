@@ -1,9 +1,8 @@
-
-
-
 <div id="customize_grid">
     <img src="<%= pizza.image_url %>" alt="din pizza" id="customized_pizza">
+    
     <div id="ingredients_list">
+        <h1>Ingredienser på pizzan:</h1>
         <ul id="ingredient_list">
             <%= for {ingredient, index} <- Enum.with_index(pizza.ingredients) do %>
                 <li data-ingredient="<%= ingredient %>">
@@ -13,58 +12,197 @@
             <% end %>
         </ul>
     </div>
+    
+    <div id="ingredient_holder">
+        <h1>Tillgängliga ingredienser</h1>
+        <ul id="all_ingredients">
+            <%= for ingredient <- all_ingredients do %>
+                <li data-ingredient="<%= ingredient.name %>">
+                    <%= ingredient.name %>
+                    <button class="add-btn" type="button">+</button>
+                </li>
+            <%= end %>
+        </ul>
+    </div>
 </div>
 
+<div id="buyclass">
+    <p><strong><%= pizza.name %></strong></p>
+    <label class="pizza-size-radio">
+        <input type="radio" name="pizza-size-<%= pizza.id%>" id="pizza-size-1-<%= pizza.id %>" value="1" checked> Small
+    </label> 
+    <br/>
+    <label class="pizza-size-radio">
+        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-2-<%= pizza.id %>" value="2"> Medium
+    </label>
+    <br/>
+    <label class="pizza-size-radio">
+        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-3-<%= pizza.id %>" value="3"> Large
+    </label>
+    <br/>
+    <br/>
+    <button class="pizza-negative-button" onclick="showBuy('<%= pizza.id %>')">Avbryt</button>
+    <button class="pizza-positive-button" onclick="buy('<%= pizza.id %>', '<%= pizza.name %>')">Köp</button>
+</div>
+
+
+
+<form id="order-form" action="/order/add" method="POST" style="display: none;"></form>
+    <input type="hidden" name="pizzaId" id="pizzaId">
+    <input type="hidden" name="size" id="size">
+    <input type="hidden" name="amount" id="amount">
+    <input type="hidden" name="add" id="add">
+    <input type="hidden" name="sub" id="sub">
+</form>
+
+
+
+
+
+
+
+
+
 <script>
-// JavaScript to handle the ingredient removal
-document.addEventListener('DOMContentLoaded', () => {
-    // Get the list of ingredients from the server-rendered HTML
-    let ingredients = Array.from(document.querySelectorAll('#ingredient_list li')).map(li => li.dataset.ingredient);
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initial ingredients on the pizza
+        let initialIngredients = Array.from(document.querySelectorAll('#ingredient_list li')).map(li => li.dataset.ingredient);
+        let ingredients = [...initialIngredients];  // Copy the initial ingredients to track current state
 
-    // Attach event listeners to each remove button
-    document.querySelectorAll('.remove-btn').forEach(button => {
-        button.addEventListener('click', (event) => {
-            // Find the parent <li> element and its ingredient
-            const li = event.target.closest('li');
-            const ingredient = li.dataset.ingredient;
+        // Remove any ingredients from the available list that are already on the pizza
+        filterAvailableIngredients();
 
-            // Remove the ingredient from the array
-            ingredients = ingredients.filter(item => item !== ingredient);
+        // Attach event listeners to each remove button
+        document.querySelectorAll('.remove-btn').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const li = event.target.closest('li');
+                const ingredient = li.dataset.ingredient;
 
-            // Remove the <li> element from the DOM
-            li.remove();
+                // Remove the ingredient from the current array
+                ingredients = ingredients.filter(item => item !== ingredient);
 
-            // Optionally, update the server or application state with the new ingredient list
-            console.log('Updated ingredients list:', ingredients);
-            // Here you can send the updated list to the server if needed
+                // Remove the <li> element from the DOM
+                li.remove();
+
+                // Add the ingredient back to the available list
+                addToAllIngredients(ingredient);
+            });
         });
-    });
-});
 
+        // Attach event listeners to each add button
+        document.querySelectorAll('.add-btn').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const li = event.target.closest('li');
+                const ingredient = li.dataset.ingredient;
+
+                // Add the ingredient to the pizza list
+                addToIngredientList(ingredient);
+
+                // Remove the ingredient from the available ingredients list
+                li.remove();
+            });
+        });
+
+        // Function to filter available ingredients
+        function filterAvailableIngredients() {
+            const allIngredientsList = document.querySelectorAll('#all_ingredients li');
+            allIngredientsList.forEach(li => {
+                const ingredient = li.dataset.ingredient;
+                if (ingredients.includes(ingredient)) {
+                    li.remove(); // Remove from the available ingredients list if already on the pizza
+                }
+            });
+        }
+
+        // Function to add an ingredient to the pizza list
+        function addToIngredientList(ingredient) {
+            if (!ingredients.includes(ingredient)) {
+                ingredients.push(ingredient);
+
+                const ingredientList = document.querySelector('#ingredient_list');
+                const newLi = document.createElement('li');
+                newLi.dataset.ingredient = ingredient;
+                newLi.innerHTML = `${ingredient} <button class="remove-btn" type="button">-</button>`;
+                ingredientList.appendChild(newLi);
+
+                // Attach remove event listener to the new button
+                newLi.querySelector('.remove-btn').addEventListener('click', (event) => {
+                    const li = event.target.closest('li');
+                    const ingredient = li.dataset.ingredient;
+
+                    // Remove from the array
+                    ingredients = ingredients.filter(item => item !== ingredient);
+
+                    // Remove from DOM
+                    li.remove();
+
+                    // Add back to available ingredients
+                    addToAllIngredients(ingredient);
+                });
+            }
+        }
+
+        // Function to add an ingredient back to the available list
+        function addToAllIngredients(ingredient) {
+            const allIngredientsList = document.querySelector('#all_ingredients');
+            const newLi = document.createElement('li');
+            newLi.dataset.ingredient = ingredient;
+            newLi.innerHTML = `${ingredient} <button class="add-btn" type="button">+</button>`;
+            allIngredientsList.appendChild(newLi);
+
+            // Attach add event listener to the new button
+            newLi.querySelector('.add-btn').addEventListener('click', (event) => {
+                const li = event.target.closest('li');
+                const ingredient = li.dataset.ingredient;
+
+                // Add to pizza list
+                addToIngredientList(ingredient);
+
+                // Remove from available ingredients list
+                li.remove();
+            });
+        }
+
+        function getSelectedPizzaSize(pizzaId) {
+        const selectedRadio = document.querySelector(`input[name="pizza-size-${pizzaId}"]:checked`);
+        if (selectedRadio) {
+            return selectedRadio.value;
+        }
+        return null;
+
+        }
+        // Function to handle the purchase
+        function buy(pizzaId, pizzaName) {
+            console.log('Buy function triggered'); // Check if this logs
+
+            // Get the current ingredients from #ingredient_list
+            let currentIngredients = Array.from(document.querySelectorAll('#ingredient_list li')).map(li => li.dataset.ingredient);
+
+            // Calculate ingredients to add (present in current but not in initial)
+            let addIngredients = currentIngredients.filter(ingredient => !initialIngredients.includes(ingredient));
+
+            // Calculate ingredients to subtract (present in initial but not in current)
+            let subIngredients = initialIngredients.filter(ingredient => !currentIngredients.includes(ingredient));
+
+            // Set the hidden input values
+            document.getElementById('pizzaId').value = pizzaId;
+            document.getElementById('size').value = getSelectedPizzaSize(pizzaId);
+            document.getElementById('amount').value = 1; // Set default count or dynamically set it
+            document.getElementById('add').value = addIngredients.join('&&&&'); // Join ingredients to be added
+            document.getElementById('sub').value = subIngredients.join('&&&&'); // Join ingredients to be subtracted
+            console.log(document.getElementById('pizzaId').value, document.getElementById('size').value,document.getElementById('add').value = addIngredients.join('&&&&'),document.getElementById('sub').value = subIngredients.join('&&&&'))
+            // Submit the form like a normal POST
+            document.getElementById('order-form').submit();
+        }
+
+        // Make sure the buy function is accessible globally
+        window.buy = buy;
+    });
 </script>
 
 
 
 
-
-
-
-
-
-<!-- 
-<div id="customize_grid">
-    <img src="<%= pizza.image_url %>" alt="din pizza" id="customized_pizza">
-    <div id="ingredients_list">
-        <ul>
-            <%= for {ingredient, index} <- Enum.with_index(pizza.ingredients) do %>
-                <li>
-                    <%= ingredient %>
-                   <button id="remove_<%= ingredient %>" type="button">-</button>
-                </li>
-            <% end %>
-        </ul>
-    </div>
-</div> -->
 
 
 
