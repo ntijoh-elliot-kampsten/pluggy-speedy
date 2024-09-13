@@ -7,18 +7,27 @@ defmodule Pluggy.Router do
   alias Pluggy.PizzaController
   alias Pluggy.UserController
   alias Pluggy.CheckoutController
-  alias Pluggy.LayoutController
 
   plug(Plug.Static, at: "/", from: :pluggy)
   plug(:put_secret_key_base)
 
+  # plug(Plug.Session,
+  #   store: :cookie,
+  #   key: "_pluggy_session",
+  #   encryption_salt: "cookie store encryption salt",
+  #   signing_salt: "cookie store signing salt",
+  #   key_length: 64,
+  #   log: :debug,
+  #   secret_key_base: "-- LONG STRING WITH AT LEAST 64 BYTES -- LONG STRING WITH AT LEAST 64 BYTES --"
+  # )
+
   plug(Plug.Session,
-  store: :cookie,
-  key: "_my_app_session",
-  encryption_salt: "cookie store encryption salt",
-  signing_salt: "cookie store signing salt",
-  log: :debug
-)
+    store: :cookie,
+    key: "_my_app_session",
+    encryption_salt: "cookie store encryption salt",
+    signing_salt: "cookie store signing salt",
+    log: :debug
+  )
 
   plug(:fetch_session)
   plug(Plug.Parsers, parsers: [:urlencoded, :multipart])
@@ -30,6 +39,7 @@ defmodule Pluggy.Router do
 
   get("/orders", do: OrderController.show_orders(conn))
   post("/order/add", do: OrderController.create(conn, conn.body_params))
+  get("/order/update", do: Order.update_order("Carl Svensson"))
 
   get("/customize/:id", do: PizzaController.customize(conn, id))
 
@@ -50,11 +60,15 @@ defmodule Pluggy.Router do
   # post("/fruits/:id/destroy", do: FruitController.destroy(conn, id))
 
   # User management routes
-  get("/login", do: UserController.show_login_form(conn))
+  get("/login", do: UserController.login_form(conn))
+  get("/signup", do: UserController.signup_form(conn)) # Ensure signup_form/1 is defined
+  get("/change_password", do: UserController.change_password_form(conn)) # Ensure change_password_form/1 is defined
   post("/users/login", do: UserController.login(conn, conn.body_params))
-  get("/signup", do: UserController.show_signup_form(conn))
-  post("/users/signup", do: UserController.sign_up(conn, conn.body_params))
   post("/users/logout", do: UserController.logout(conn))
+  post("/users/signup", do: UserController.signup(conn, conn.body_params)) # Ensure signup/2 is defined
+  post("/users/change_password", do: UserController.change_password(conn, conn.body_params)) # Ensure change_password/2 is defined
+
+
 
   match _ do
     send_resp(conn, 404, "oops")

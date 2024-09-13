@@ -1,10 +1,36 @@
 defmodule Pluggy.UserController do
-  import Plug.Conn
-  alias Pluggy.User
-  require Logger
+  # import Pluggy.Template, only: [render: 2] #det här exemplet renderar inga templates
+  import Plug.Conn, only: [send_resp: 3]
 
-  # Renders the login form with a link to signup
-  def show_login_form(conn) do
+  def login(conn, params) do
+    username = params["username"]
+    password = params["pwd"]
+
+     #Bör antagligen flytta SQL-anropet till user-model (t.ex User.find)
+    result =
+      Postgrex.query!(DB, "SELECT id, password FROM users WHERE name = $1", [username],
+        pool: DBConnection.ConnectionPool
+      )
+
+    case result.num_rows do
+      # no user with that username
+      0 ->
+        redirect(conn, "/login")
+      # user with that username exists
+      _ ->
+        [[id, password_hash]] = result.rows
+
+        # make sure password is correct
+        if Bcrypt.verify_pass(password, password_hash) do
+          Plug.Conn.put_session(conn, :user_id, id)
+          |> redirect("/main") #skicka vidare modifierad conn
+        else
+          redirect(conn, "/login")
+        end
+    end
+  end
+
+  def login_form(conn) do
     send_resp(
       conn,
       200,
@@ -12,28 +38,32 @@ defmodule Pluggy.UserController do
     )
   end
 
-def login(conn, %{"username" => username, "pwd" => pwd}) do
-  case User.get_user(username) do
-    nil ->
-      redirect(conn, "/login")
-
-    %Pluggy.User{id: id, password_hash: password_hash} ->
-      if Bcrypt.verify_pass(pwd, password_hash) do
-        conn
-        |> put_session(:user_id, id)
-        |> redirect("/main")
-      else
-        redirect(conn, "/login")
-      end
-
-    _ ->
-      redirect(conn, "/login")
+  def logout(conn) do
+    Plug.Conn.configure_session(conn, drop: true) #tömmer sessionen
+    |> redirect("/login")
   end
-end
 
+  # def create(conn, params) do
+  # 	#pseudocode
+  # 	# in db table users with password_hash CHAR(60)
+  # 	# hashed_password = Bcrypt.hash_pwd_salt(params["password"])
+  #  	# Postgrex.query!(DB, "INSERT INTO users (username, password_hash) VALUES ($1, $2)", [params["username"], hashed_password], [pool: DBConnection.ConnectionPool])
+  #  	# redirect(conn, "/fruits")
+  # end
 
-  # Renders the signup form with a link to login
-  def show_signup_form(conn) do
+  def signup(conn, %{"username" => username, "pwd" => password, "number" => number, "mail" => mail}) do
+    hashed_password = Bcrypt.hash_pwd_salt(password)
+
+    Postgrex.query!(DB,
+      "INSERT INTO users (name, password, number, mail) VALUES ($1, $2, $3, $4)",
+      [username, hashed_password, number, mail],
+      pool: DBConnection.ConnectionPool
+    )
+
+    redirect(conn, "/login")
+  end
+
+  def signup_form(conn) do
     send_resp(
       conn,
       200,
@@ -41,39 +71,38 @@ end
     )
   end
 
-  # Handles user signup
-  def sign_up(conn, %{"username" => username, "pwd" => pwd, "number" => num, "mail" => mail}) do
-    hashed_password = Bcrypt.hash_pwd_salt(pwd)
+  def change_password(conn, %{"user" => %{"current_password" => current_password, "new_password" => new_password}}) do
+    user_id = Plug.Conn.get_session(conn, :user_id)
 
-    Logger.info("Sign-up attempt for username: #{username}")
+    result = Postgrex.query!(DB, "SELECT password FROM users WHERE id = $1", [user_id], pool: DBConnection.ConnectionPool)
 
-    if User.user_exist(username) do
-      Logger.warning("Username already exists: #{username}")
-      redirect(conn, "/login")
+    [[password]] = result.rows
+
+    if Bcrypt.verify_pass(current_password, password) do
+      new_hashed_password = Bcrypt.hash_pwd_salt(new_password)
+
+      Postgrex.query!(DB,
+        "UPDATE users SET password = $1 WHERE id = $2",
+        [new_hashed_password, user_id],
+        pool: DBConnection.ConnectionPool
+      )
+
+      redirect(conn, "/main")
     else
-      case User.insert_user(username, hashed_password, num, mail) do
-        {:ok, _result} ->
-          Logger.info("User successfully created: #{username}")
-          redirect(conn, "/login")
-
-        {:error, reason} ->
-          Logger.error("Failed to insert user: #{reason}")
-          send_resp(conn, 500, "Internal Server Error")
-      end
+      redirect(conn, "/change_password")
     end
   end
 
-  # Logs out the user
-  def logout(conn) do
-    conn
-    |> configure_session(drop: true)
-    |> redirect("/main")
+  def change_password_form(conn) do
+    send_resp(
+      conn,
+      200,
+      Pluggy.Template.render("pizzas/change_password", [], false)
+    )
   end
 
-  # Helper function to handle redirects
-  defp redirect(conn, url) do
-    conn
-    |> put_resp_header("location", url)
-    |> send_resp(303, "")
-  end
+
+
+  defp redirect(conn, url),
+    do: Plug.Conn.put_resp_header(conn, "location", url) |> send_resp(303, "")
 end
