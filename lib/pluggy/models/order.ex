@@ -7,6 +7,7 @@ defmodule Pluggy.Order do
   def all do
     Postgrex.query!(DB, "SELECT * FROM orders", []).rows
     |> parse_data
+    #|> IO.inspect
   end
 
   def get(id) do

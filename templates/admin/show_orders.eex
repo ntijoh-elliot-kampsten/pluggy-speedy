@@ -15,26 +15,49 @@
             <span class="show-order-item-collapse-button" id=<%="#{index}"%>></span>
             <span class="show-order-item-order-id"><%=order.order_id%></span>
             <span class="show-order-item-user-name"><%=order.user_name%></span>
-            <%= for pizzas <- order.order do%>
-              <span class="show-order-item-pizza-name"><%=pizzas.pizza_name%></span>
-            <% end%>
-            <span class="show-order-item-price">340 kr</span>
+            <span class="show-order-item-price">340 SEK</span>
             <span class="show-order-item-state"><%= order.state%></span>
           </li>
           <div class="collapsible-content" id=<%="collapsible-content#{index}"%>>
+            <ul class="show-order-collapsible-content-list">
             <%= for pizzas <- order.order do%>
-            <ul>
-              <li>
-                Pizza: <%=pizzas.pizza_name%>
-                <%= for adds <- pizzas.add do%>
-                <p>+ <%=adds%></p>
-                <% end%>
-                <%= for subs <- pizzas.sub do%>
-                <p>- <%=subs%></p>
-                <% end%>
+              <li class="show-order-collapsible-content-list-item">
+                <p><%= pizzas.amount%>st <%=pizzas.pizza_name%></p>
+
+                <p>+
+                  <%= for {adds, adds_index} <- Enum.with_index(pizzas.add) do%>
+                    <%= if adds_index == length(pizzas.add)-1 do%>
+                      <%=adds%>
+                    <% else%>
+                      <%=adds%>,
+                    <% end%>
+                  <% end%>
+                </p>
+                <p>-
+                  <%= for {subs, subs_index} <- Enum.with_index(pizzas.sub) do%>
+                    <%= if subs_index == length(pizzas.sub)-1 do%>
+                      <%=subs%>
+                    <% else%>
+                      <%=subs%>,
+                    <% end%>
+                  <% end%>
+                </p>
+
+                <span><%= pizzas.total_cost_for_pizza%> SEK</span>
               </li>
-            </ul>
             <% end%>
+            </ul>
+            <div class="show-order-collapsible-content-info">
+              <span>
+                <% total_cost = 0%>
+                <%= for pizzas <- order.order do %>
+                  <% total_cost = total_cost + pizzas.total_cost_for_pizza%>
+                <% end%>
+                <%= total_cost%> SEK
+              </span>
+              <button class="show-order-collapsible-content-change-status">Status</button>
+              <button class="show-order-collapsible-content-remove-order">Remove</button>
+            </div>
           </div>
         <%end%>
       </ul>
