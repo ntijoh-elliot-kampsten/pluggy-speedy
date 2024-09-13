@@ -13,6 +13,7 @@ defmodule Pluggy.Template do
   # end
 
   alias Pluggy.Layout
+  alias Pluggy.Checkout
 
   def render(file, data \\ [], layout \\ true) do
     case layout do
@@ -20,7 +21,8 @@ defmodule Pluggy.Template do
         EEx.eval_file("templates/layout.eex",
           template: EEx.eval_file("templates/#{file}.eex", data),
           basket_amount: Layout.get_basket_amount("Carl Svensson"),
-          user_name: "Carl Svensson"
+          user_name: "Carl Svensson",
+          orders: Checkout.get_current_order(1)
         )
 
       false ->
