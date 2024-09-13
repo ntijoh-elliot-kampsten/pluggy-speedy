@@ -22,7 +22,7 @@ defmodule Mix.Tasks.Seed do
     Postgrex.query!(DB, "Create TABLE pizzas (id SERIAL, name VARCHAR(255) NOT NULL, ingredients_id VARCHAR(255), price INTEGER, image_url VARCHAR(255))", [], pool: DBConnection.ConnectionPool)
     Postgrex.query!(DB, "Create TABLE orders (id SERIAL, user_id INTEGER, user_name VARCHAR(255) NOT NULL, current_order VARCHAR(2000000), state VARCHAR(255) NOT NULL)", [], pool: DBConnection.ConnectionPool)
     Postgrex.query!(DB, "Create TABLE ingredients (name VARCHAR(255) NOT NULL UNIQUE, price INTEGER NOT NULL)", [], pool: DBConnection.ConnectionPool)
-    Postgrex.query!(DB, "Create TABLE users (id SERIAL, password VARCHAR(255), name VARCHAR(255) NOT NULL, number INTEGER, mail VARCHAR(255), is_admin BOOLEAN DEFAULT false)", [], pool: DBConnection.ConnectionPool)
+    Postgrex.query!(DB, "Create TABLE users (id SERIAL, password VARCHAR(255), name VARCHAR(255) NOT NULL, number VARCHAR(255), mail VARCHAR(255), is_admin BOOLEAN DEFAULT false)", [], pool: DBConnection.ConnectionPool)
   end
 
   defp seed_data() do

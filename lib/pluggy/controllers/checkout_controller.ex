@@ -15,17 +15,20 @@ defmodule Pluggy.CheckoutController do
         _ -> User.get(session_user)
       end
 
-    orders = Pluggy.Checkout.get_current_order(1)
+    # Ensure orders is always a list
+    orders = Pluggy.Checkout.get_current_order(1) || []
 
+    # Calculate the total amount safely
     total_amount =
       orders
-      |> Enum.flat_map(& &1.order)
+      |> Enum.flat_map(&(&1.order || [])) # Ensure `order` is not nil
       |> Enum.reduce(0.0, fn pizza, acc ->
-        acc + pizza.amount * pizza.price
+        acc + ((pizza.amount || 0) * (pizza.price || 0.0)) # Default to 0 if nil
       end)
 
-    send_resp(conn, 200, Pluggy.Template.render("pizzas/checkout", user: current_user, orders: orders, total_amount: total_amount))
+    send_resp(conn, 200, render("pizzas/checkout", user: current_user, orders: orders, total_amount: total_amount))
   end
+
 
   def finalize(conn, %{"order_id" => order_id}) do
     IO.inspect(order_id, label: "Received Order ID")
@@ -52,12 +55,19 @@ defmodule Pluggy.CheckoutController do
 
     orders = Pluggy.Checkout.get_current_order(1)
 
+    IO.inspect(orders, label: "Orders Data")
     total_amount =
-      orders
-      |> Enum.flat_map(& &1.order)
-      |> Enum.reduce(0.0, fn pizza, acc ->
-        acc + pizza.amount * pizza.price
-      end)
+      if is_list(orders) do
+        orders
+        |> Enum.flat_map(& &1.order)
+        |> Enum.reduce(0.0, fn pizza, acc ->
+          acc + pizza.amount * pizza.price
+        end)
+      else
+        0.0
+      end
+
+    IO.inspect(total_amount, label: "Total Amount")
 
     send_resp(
       conn,
