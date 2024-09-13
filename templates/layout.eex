@@ -9,7 +9,7 @@
 <body>
     <header>
         <div id="user-logo-container">
-            <img id="user-logo" src="/images/user-logo.png" alt="" onClick="window.location.href = '/login'">
+            <img id="user-logo" src="/images/user-logo.png" alt="" onClick="window.location.href = '/change_password'">
             <p id="user-text"><%= user_name %></p>
         </div>
         <img id="tonys-pizza-logo" src="/images/tonys-pizza-logo.svg" alt="" onClick="window.location.href = '/main'">
