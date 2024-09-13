@@ -3,6 +3,7 @@ defmodule Pluggy.Order do
 
   alias Pluggy.Order
   alias Pluggy.Pizza
+  alias Pluggy.Helper
 
   def all do
     Postgrex.query!(DB, "SELECT * FROM orders", []).rows
@@ -11,49 +12,34 @@ defmodule Pluggy.Order do
   end
 
   def get(id) do
-    Postgrex.query!(DB, "SELECT * FROM orders WHERE id = $1 LIMIT 1", [String.to_integer(id)]
+    Postgrex.query!(DB, "SELECT * FROM orders WHERE id = $1 LIMIT 1", [Helper.safe_string_to_integer(id)]
     ).rows
     |> to_struct
   end
 
   def update_order(conn, params) do
     user_name = "Carl Svensson"
-    IO.puts(user_name)
-
-    current_order = Enum.at(get_user_unsubmitted_order(user_name), 0).order
-
-    IO.inspect(current_order)
-
-    order = %{
-      pizza_id: String.to_integer(params["pizzaId"]),
-      size: String.to_integer(params["size"]),
-      amount: String.to_integer(params["amount"]),
-      add: if params["add"] && params["add"] != "" do
-        String.split(params["add"], "&&&&")
-      else
-        []
-      end,
-      sub: if params["sub"] && params["sub"] != "" do
-        String.split(params["sub"], "&&&&")
-      else
-        []
-      end,
-      price: Pizza.calculate_price(params["pizzaId"], if params["add"] && params["add"] != "" do
-        String.split(params["add"], "&&&&")
-      else
-        []
-      end)
-    }
-
-    new_order = [order | current_order]
-
-    IO.inspect(convert_list_to_string(new_order))
 
     # Insert the new updated order into the database
     Postgrex.query!(
       DB,
       "UPDATE orders SET \"current_order\" = $1 WHERE user_name = $2 AND state = ''",
-      [convert_list_to_string(new_order), user_name]
+      [build_updated_order_string(
+        Enum.at(get_user_unsubmitted_order_parsed(user_name), 0).order,
+        Helper.safe_string_to_integer(params["pizzaId"]),
+        Helper.safe_string_to_integer(params["size"]),
+        Helper.safe_string_to_integer(params["amount"]),
+        if params["add"] && params["add"] != "" do
+          String.split(params["add"], "&&&&")
+        else
+          []
+        end,
+        if params["sub"] && params["sub"] != "" do
+          String.split(params["sub"], "&&&&")
+        else
+          []
+        end
+      ), user_name]
     )
   end
 
@@ -69,35 +55,25 @@ defmodule Pluggy.Order do
       user_unsubmitted_order_exist(user_name) ->
         update_order(conn, params)
       true ->
-        # Create the order map and handle empty "add" and "sub" fields using atoms instead of strings
-        order = %{
-          pizza_id: String.to_integer(params["pizzaId"]),
-          size: String.to_integer(params["size"]),
-          amount: String.to_integer(params["amount"]),
-          add: if params["add"] && params["add"] != "" do
-            String.split(params["add"], "&&&&")
-          else
-            []
-          end,
-          sub: if params["sub"] && params["sub"] != "" do
-            String.split(params["sub"], "&&&&")
-          else
-            []
-          end,
-          price: Pizza.calculate_price(params["pizzaId"], if params["add"] && params["add"] != "" do
-            String.split(params["add"], "&&&&")
-          else
-            []
-          end)
-        }
-
-        state = ""
-
         # Insert the order into the database
         Postgrex.query!(
           DB,
           "INSERT INTO orders (user_id, user_name, current_order, state) VALUES ($1, $2, $3, $4)",
-          [user_id, user_name, convert_list_to_string([order]), state]
+          [user_id, user_name, build_new_order_string(
+            Helper.safe_string_to_integer(params["pizzaId"]),
+            Helper.safe_string_to_integer(params["size"]),
+            Helper.safe_string_to_integer(params["amount"]),
+            if params["add"] && params["add"] != "" do
+              String.split(params["add"], "&&&&")
+            else
+              []
+            end,
+            if params["sub"] && params["sub"] != "" do
+              String.split(params["sub"], "&&&&")
+            else
+              []
+            end
+          ), ""]
         )
     end
   end
@@ -105,7 +81,7 @@ defmodule Pluggy.Order do
 
   @spec delete(binary()) :: Postgrex.Result.t()
   def delete(id) do
-    Postgrex.query!(DB, "DELETE FROM orders WHERE id = $1", [String.to_integer(id)])
+    Postgrex.query!(DB, "DELETE FROM orders WHERE id = $1", [Helper.safe_string_to_integer(id)])
   end
 
   def convert_string_to_list(string) do
@@ -162,7 +138,30 @@ defmodule Pluggy.Order do
     for [id, add, sub, price, pizza_count, size] <- rows, do: %Order{pizza_id: id, add: add, sub: sub, price: price, pizza_count: pizza_count, size: size}
   end
 
-  def get_user_unsubmitted_order(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).rows |> parse_data
+  def get_user_unsubmitted_order_parsed(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).rows |> parse_data
+  def get_user_unsubmitted_order(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).rows
 
   def user_unsubmitted_order_exist(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).num_rows != 0
+
+  def build_new_order(pizza_id, size, amount \\ 1, add \\ [], sub \\ [])
+  def build_new_order(pizza_id, size, amount, add, sub) do
+    %{
+      pizza_id: pizza_id,
+      size: size,
+      amount: amount,
+      add: add,
+      sub: sub,
+      price: Pizza.calculate_price(pizza_id, add, amount)
+    }
+  end
+
+  def build_new_order_string(pizza_id, size, amount \\ 1, add \\ [], sub \\ [])
+  def build_new_order_string(pizza_id, size, amount, add, sub), do: [build_new_order(pizza_id, size, amount, add, sub)] |> convert_list_to_string()
+
+  def build_updated_order(current_order, pizza_id, size, amount \\ 1, add \\ [], sub \\ [])
+  def build_updated_order(current_order, pizza_id, size, amount, add, sub), do: [build_new_order(pizza_id, size, amount, add, sub) | current_order]
+
+  def build_updated_order_string(current_order, pizza_id, size, amount \\ 1, add \\ [], sub \\ [])
+  def build_updated_order_string(current_order, pizza_id, size, amount, add, sub), do: build_updated_order(current_order, pizza_id, size, amount, add, sub) |> convert_list_to_string()
+
 end
