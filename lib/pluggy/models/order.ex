@@ -6,7 +6,7 @@ defmodule Pluggy.Order do
   alias Pluggy.Helper
 
   def all do
-    Postgrex.query!(DB, "SELECT * FROM orders", []).rows
+    Postgrex.query!(DB, "SELECT * FROM orders ORDER BY id", []).rows
     |> parse_data
     #|> IO.inspect
   end
@@ -141,7 +141,6 @@ defmodule Pluggy.Order do
 
       pizza_name = Postgrex.query!(DB, query, [pizza_id]).rows
       Map.put(orders, :pizza_name, Enum.at(Enum.at(pizza_name, 0), 0))
-      |> Map.put(:calculated_price_for_pizza, Pizza.calculate_price(pizza_id, orders.amount))
     end)
 
     return_value

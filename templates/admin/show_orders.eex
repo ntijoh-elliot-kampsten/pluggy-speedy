@@ -43,7 +43,7 @@
                   <% end%>
                 </p>
 
-                <span><%= pizzas.calculated_price_for_pizza%> SEK</span>
+                <span><%= pizzas.price%> SEK</span>
               </li>
             <% end%>
             </ul>
