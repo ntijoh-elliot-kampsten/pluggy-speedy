@@ -22,7 +22,7 @@
             <ul class="show-order-collapsible-content-list">
             <%= for pizzas <- order.order do%>
               <li class="show-order-collapsible-content-list-item">
-                <p><%= pizzas.amount%>st <%=pizzas.pizza_name%></p>
+                <p><%= pizzas.amount%>st <%=pizzas.pizza_name%> - <%= pizzas.size%></p>
 
                 <p>+
                   <%= for {adds, adds_index} <- Enum.with_index(pizzas.add) do%>
@@ -43,7 +43,7 @@
                   <% end%>
                 </p>
 
-                <span><%= pizzas.calculated_price_for_pizza%> SEK</span>
+                <span><%= pizzas.price%> SEK</span>
               </li>
             <% end%>
             </ul>

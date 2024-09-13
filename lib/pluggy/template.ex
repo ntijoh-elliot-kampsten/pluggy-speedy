@@ -13,20 +13,16 @@ defmodule Pluggy.Template do
   # end
 
   alias Pluggy.Layout
+  alias Pluggy.Checkout
 
-  def render(conn, file, data \\ [], layout \\ true) do
-    session_user = conn.private.plug_session["user_id"]
-
-    cond do
-      session_user == nil && file != "pizzas/signup" -> EEx.eval_file("templates/pizzas/login.eex", data)
+  def render(file, data \\ [], layout \\ true) do
+    case layout do
       true ->
-        case layout do
-          true ->
-            EEx.eval_file("templates/layout.eex",
-              template: EEx.eval_file("templates/#{file}.eex", data),
-              basket_amount: Layout.get_basket_amount("Carl Svensson"),
-              user_name: "Carl Svensson"
-            )
+        EEx.eval_file("templates/layout.eex",
+          template: EEx.eval_file("templates/#{file}.eex", data),
+          basket_amount: Layout.get_basket_amount("Carl Svensson"),
+          user_name: "Carl Svensson"
+        )
 
           false ->
             EEx.eval_file("templates/#{file}.eex", data)

@@ -6,7 +6,7 @@ defmodule Pluggy.Order do
   alias Pluggy.Helper
 
   def all do
-    Postgrex.query!(DB, "SELECT * FROM orders", []).rows
+    Postgrex.query!(DB, "SELECT * FROM orders ORDER BY id", []).rows
     |> parse_data
     #|> IO.inspect
   end
@@ -118,6 +118,23 @@ defmodule Pluggy.Order do
     order_list = Enum.at(order_input, index)
     order_map = Enum.at(order_list, map_index)
     get_total_price(order_input, index, map_index + 1, length(order_list) , total_price + Pizza.calculate_price(order_map.pizza_id, order_map.amount))
+
+    # Enum.reduce(0.0, fn pizza, acc ->
+    #   acc + ((pizza.amount || 0) * (pizza.price || 0.0)) # Default to 0 if nil
+    # end)
+  end
+
+  def get_size(size) do
+    test = case size do
+      1 ->
+        "Liten"
+      2 ->
+        "Stor"
+      3 ->
+        "Familjepizza"
+      _ ->
+        "Storlek hittades ej"
+    end
   end
 
   def get_full_order_data(rows, index, map_pos) do
@@ -129,6 +146,7 @@ defmodule Pluggy.Order do
 
     return_value = Enum.map(0..length(order_map)-1, fn(k) ->
       orders = Enum.at(order_map, k)
+      new_map = %{orders | size: get_size(orders.size)}
       pizza_id = orders.pizza_id
 
       query = """
@@ -136,8 +154,7 @@ defmodule Pluggy.Order do
       """
 
       pizza_name = Postgrex.query!(DB, query, [pizza_id]).rows
-      Map.put(orders, :pizza_name, Enum.at(Enum.at(pizza_name, 0), 0))
-      |> Map.put(:calculated_price_for_pizza, Pizza.calculate_price(pizza_id, orders.amount))
+      Map.put(new_map, :pizza_name, Enum.at(Enum.at(pizza_name, 0), 0))
     end)
 
     return_value

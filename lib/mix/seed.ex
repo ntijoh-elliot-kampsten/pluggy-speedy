@@ -40,8 +40,8 @@ defmodule Mix.Tasks.Seed do
     # Password is "123"
     Postgrex.query!(DB, "INSERT INTO users(name, password, number, mail, is_admin) VALUES($1, $2, $3, $4, $5)", ["Carl Svensson", "$2b$12$4Co1TinijJo1Xq8a0f0LHevgrHTCB6BCPN5i1xmJ53cqNJ2EMPBeS", "0123456789", "", false], pool: DBConnection.ConnectionPool)
 
-    Postgrex.query!(DB, "INSERT INTO orders(user_id, user_name, current_order, state) VALUES($1, $2, $3, $4)", [1, "Carl Svensson", "[%{pizza_id: 1, add: [\"Svamp\"], sub: [\"Tomatsås\"], size: 1, amount: 2}]", "Making"], pool: DBConnection.ConnectionPool)
-    Postgrex.query!(DB, "INSERT INTO orders(user_id, user_name, current_order, state) VALUES($1, $2, $3, $4)", [-1, "Abdi Svensson", "[%{pizza_id: 1, add: [\"Svamp\"], sub: [\"Tomatsås\"], size: 1, amount: 2}, %{pizza_id: 3, add: [\"Basilika\"], sub: [\"Skinka\", \"Svamp\"], size: 2, amount: 1}]", "Done"], pool: DBConnection.ConnectionPool)
-  end
 
+    Postgrex.query!(DB, "INSERT INTO orders(user_id, user_name, current_order, state) VALUES($1, $2, $3, $4)", [1, "Carl Svensson", "[%{pizza_id: 1, add: [\"Svamp\"], sub: [\"Tomatsås\"], size: 1, amount: 2, price: 110}]", "Making"], pool: DBConnection.ConnectionPool)
+    Postgrex.query!(DB, "INSERT INTO orders(user_id, user_name, current_order, state) VALUES($1, $2, $3, $4)", [-1, "Abdi Svensson", "[%{pizza_id: 1, add: [\"Svamp\"], sub: [\"Tomatsås\"], size: 1, amount: 2, price: 110}, %{pizza_id: 3, add: [\"Basilika\"], sub: [\"Skinka\", \"Svamp\"], size: 2, amount: 1, price: 110}]", "Done"], pool: DBConnection.ConnectionPool)
+  end
 end
