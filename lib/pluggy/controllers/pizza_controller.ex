@@ -4,7 +4,7 @@ defmodule Pluggy.PizzaController do
   alias Pluggy.Pizza
   alias Pluggy.Order
   alias Pluggy.User
-  import Pluggy.Template, only: [render: 2, render: 3]
+  import Pluggy.Template, only: [render: 4, render: 3]
   import Plug.Conn, only: [send_resp: 3]
 
   def index(conn) do
@@ -16,14 +16,14 @@ defmodule Pluggy.PizzaController do
         nil -> nil
         _ -> User.get(session_user)
       end
-    send_resp(conn, 200, render("pizzas/index", pizzas: Pizza.all(), user: current_user))
+    send_resp(conn, 200, render(conn, "pizzas/index", pizzas: Pizza.all(), user: current_user))
   end
 
   #render använder eex
-  def new(conn), do: send_resp(conn, 200, render("pizzas/new", []))
-  def show(conn, id), do: send_resp(conn, 200, render("pizzas/show", pizza: Pizza.get(id)))
-  def edit(conn, id), do: send_resp(conn, 200, render("pizzas/edit", pizza: Pizza.get(id)))
-  def customize(conn, id), do: send_resp(conn, 200, render("/pizzas/customize", pizza: Pizza.get(id)))
+  def new(conn), do: send_resp(conn, 200, render(conn, "pizzas/new", []))
+  def show(conn, id), do: send_resp(conn, 200, render(conn, "pizzas/show", pizza: Pizza.get(id)))
+  def edit(conn, id), do: send_resp(conn, 200, render(conn, "pizzas/edit", pizza: Pizza.get(id)))
+  def customize(conn, id), do: send_resp(conn, 200, render(conn, "/pizzas/customize", pizza: Pizza.get(id)))
 
   def create(conn, params) do
     Pizzas.create(params)
