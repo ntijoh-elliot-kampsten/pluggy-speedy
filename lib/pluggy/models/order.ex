@@ -14,7 +14,7 @@ defmodule Pluggy.Order do
   def get(id) do
     Postgrex.query!(DB, "SELECT * FROM orders WHERE id = $1 LIMIT 1", [Helper.safe_string_to_integer(id)]
     ).rows
-    |> to_struct
+    |> parse_data
   end
 
   def update_order(conn, params) do
@@ -43,8 +43,23 @@ defmodule Pluggy.Order do
     )
   end
 
-  def update_state() do
+  def change_state(_conn, params) do
+    query = """
+    UPDATE orders SET \"state\" = $1 WHERE id = $2
+    """
 
+    Postgrex.query!(
+      DB,
+      query,
+      [params["new_state"], String.to_integer(params["order_id"])]
+    )
+  end
+
+  def remove_order(_conn, params) do
+    query = """
+    REMOVE orders WHERE id = $1
+    """
+    IO.inspect(params)
   end
 
   def create(conn, params) do

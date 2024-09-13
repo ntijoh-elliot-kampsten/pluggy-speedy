@@ -11,55 +11,99 @@
     <div class="show-orders-order-list-container">
       <ul class="show-orders-order-list">
         <%= for {order, index} <- Enum.with_index(orders) do%>
-          <li class="show-orders-order-item" id=<%="order-item#{index}"%>>
-            <span class="show-order-item-collapse-button" id=<%="#{index}"%>></span>
-            <span class="show-order-item-order-id"><%=order.order_id%></span>
-            <span class="show-order-item-user-name"><%=order.user_name%></span>
-            <span class="show-order-item-price"><%= order.total_price%> SEK</span>
-            <span class="show-order-item-state"><%= order.state%></span>
-          </li>
-          <div class="collapsible-content" id=<%="collapsible-content#{index}"%>>
-            <ul class="show-order-collapsible-content-list">
-            <%= for pizzas <- order.order do%>
-              <li class="show-order-collapsible-content-list-item">
-                <p><%= pizzas.amount%>st <%=pizzas.pizza_name%> - <%= pizzas.size%></p>
+          <%= if order.state != "" do%>
+            <li class="show-orders-order-item" id=<%="order-item#{index}"%>>
+              <span class="show-order-item-collapse-button" id=<%="#{index}"%>></span>
+              <span class="show-order-item-order-id"><%=order.order_id%></span>
+              <span class="show-order-item-user-name"><%=order.user_name%></span>
+              <span class="show-order-item-price"><%= order.total_price%> SEK</span>
+              <span class="show-order-item-state"><%= order.state%></span>
+            </li>
+            <div class="collapsible-content" id=<%="collapsible-content#{index}"%>>
+              <ul class="show-order-collapsible-content-list">
+              <%= for pizzas <- order.order do%>
+                <li class="show-order-collapsible-content-list-item">
+                  <p><%= pizzas.amount%>st <%=pizzas.pizza_name%> - <%= pizzas.size%></p>
 
-                <p>+
-                  <%= for {adds, adds_index} <- Enum.with_index(pizzas.add) do%>
-                    <%= if adds_index == length(pizzas.add)-1 do%>
-                      <%=adds%>
-                    <% else%>
-                      <%=adds%>,
+                  <p>+
+                    <%= for {adds, adds_index} <- Enum.with_index(pizzas.add) do%>
+                      <%= if adds_index == length(pizzas.add)-1 do%>
+                        <%=adds%>
+                      <% else%>
+                        <%=adds%>,
+                      <% end%>
                     <% end%>
-                  <% end%>
-                </p>
-                <p>-
-                  <%= for {subs, subs_index} <- Enum.with_index(pizzas.sub) do%>
-                    <%= if subs_index == length(pizzas.sub)-1 do%>
-                      <%=subs%>
-                    <% else%>
-                      <%=subs%>,
+                  </p>
+                  <p>-
+                    <%= for {subs, subs_index} <- Enum.with_index(pizzas.sub) do%>
+                      <%= if subs_index == length(pizzas.sub)-1 do%>
+                        <%=subs%>
+                      <% else%>
+                        <%=subs%>,
+                      <% end%>
                     <% end%>
-                  <% end%>
-                </p>
+                  </p>
 
-                <span><%= pizzas.price%> SEK</span>
-              </li>
+                  <span><%= pizzas.price%> SEK</span>
+                </li>
+              <% end%>
             <% end%>
             </ul>
             <div class="show-order-collapsible-content-info">
               <span>
                 <%= order.total_price%> SEK
               </span>
-              <button class="show-order-collapsible-content-change-status">Status</button>
-              <button class="show-order-collapsible-content-remove-order">Remove</button>
+              <button type="button" class="show-order-collapsible-content-change-status" id="change-state" onclick="changeState('<%= order.state %>', '<%= order.order_id %>')">Status</button>
+              <button type="button" class="show-order-collapsible-content-remove-order" id="remove-order" onclick="removeOrder('<%= order.order_id %>')">Remove</button>
             </div>
           </div>
         <%end%>
       </ul>
     </div>
 </body>
+
+<form id="change-state-form" action="/order/change-state" method="POST" style="display: none;">
+  <input type="hidden" name="order_id" id="order_id">
+  <input type="hidden" name="new_state" id="new_state">
+</form>
+
+<form id="remove-order-form" action="/order/remove-order" method="POST" style="display: none;">
+  <input type="hidden" name="order_id" id="order_id">
+</form>
+
 <script>
+function changeState(currentState, order_id) {
+  var new_state;
+  switch(currentState) {
+    case "Registered":
+      new_state = "Making";
+      break;
+    case "Making":
+      new_state = "Done";
+      break;
+    case "Done":
+      console.log("Already done");
+      break;
+    default:
+      console.log("ERROR state not found: " + currentState);
+  }
+
+  var form = document.getElementById('change-state-form');
+  document.getElementById('order_id').value = order_id;
+  document.getElementById('new_state').value = new_state;
+
+  // Submit the form like a normal POST
+  form.submit();
+};
+
+function removeOrder(order_id) {
+  var form = document.getElementById('remove-order-form');
+  document.getElementById('order_id').value = order_id;
+
+  // Submit the form like a normal POST
+  form.submit();
+};
+
 // Select all divs with the class "show-order-item-collapse-button"
 const buttonDivs = document.querySelectorAll('.show-order-item-collapse-button');
 
