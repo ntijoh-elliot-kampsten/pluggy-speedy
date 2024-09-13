@@ -3,6 +3,7 @@ defmodule Pluggy.Pizza do
 
   alias Pluggy.Pizza
   alias Pluggy.Ingredient
+  alias Pluggy.Helper
 
   def all do
     Postgrex.query!(DB, "SELECT * FROM pizzas", []).rows
@@ -11,7 +12,7 @@ defmodule Pluggy.Pizza do
 
 
   def get(id) do
-    Postgrex.query!(DB, "SELECT * FROM pizzas WHERE id = $1 LIMIT 1", [String.to_integer(id)]
+    Postgrex.query!(DB, "SELECT * FROM pizzas WHERE id = $1 LIMIT 1", [Helper.safe_string_to_integer(id)]
     ).rows
     |> to_struct
   end
@@ -41,11 +42,7 @@ defmodule Pluggy.Pizza do
     Postgrex.query!(DB, "DELETE FROM pizzas WHERE id = $1", [String.to_integer(id)])
   end
 
-  def calculate_price(id, add \\ []) do
-    base_price = get(id).price
-    ingredients_price = calculate_ingredients_price(add)
-    base_price + ingredients_price
-  end
+  def calculate_price(id, add \\ [], amount), do: (get(id).price + calculate_ingredients_price(add)) * amount
 
   def calculate_ingredients_price(_, price \\ 0)
   def calculate_ingredients_price([], price), do: price

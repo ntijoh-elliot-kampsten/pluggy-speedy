@@ -5,12 +5,23 @@ header {
     padding: 20px;
 }
 
-#user-logo {
+#user-logo-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
     width: 6%;
     margin-right: 20px;
 }
+#user-logo {
+    width: 100%;
+}
 #user-logo:hover {
     cursor: pointer;
+}
+#user-text {
+    text-align: center;
+    margin: 0;
 }
 #tonys-pizza-logo {
     width: 40%;
@@ -50,4 +61,34 @@ header {
     text-align: center;
     color: white;
 
+}
+#checkout-basket-list-container {
+    display: none;
+    position: absolute;
+    border-radius: 20px;
+    width: 300%;
+    max-height: 500%;
+    overflow-y: auto;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%,0);
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 20px 20px;
+    box-shadow: 4px 4px 8px rgba(0,0,0,0.1);
+}
+div.checkout-basket-pizza-details-container {
+    display: flex;
+    align-items: center;
+}
+div.checkout-basket-pizza-details {
+    margin-left: 2%;
+    width: 70%;
+}
+img.checkout-basket-list-pizza-image {
+    width: 20%;
+}
+input.pizza-amount {
+    border-radius: 5px;
+    width: 30px;
 }

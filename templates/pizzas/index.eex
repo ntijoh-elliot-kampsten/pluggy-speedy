@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="/index.css">
 <div id="pizza-list-container">
     <div id="pizza-list">
         <%= for pizza <- pizzas do %>
@@ -17,17 +18,20 @@
                 <div class="pizza-size-content-container">
                     <p><strong><%= pizza.name %></strong></p>
                     <label class="pizza-size-radio">
-                        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-1-<%= pizza.id %>" value="1" checked> Small
+                        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-1-<%= pizza.id %>" value="1" checked> Liten
                     </label> 
                     <br/>
                     <label class="pizza-size-radio">
-                        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-2-<%= pizza.id %>" value="2"> Medium
+                        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-2-<%= pizza.id %>" value="2"> Stor
                     </label>
                     <br/>
                     <label class="pizza-size-radio">
-                        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-3-<%= pizza.id %>" value="3"> Large
+                        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-3-<%= pizza.id %>" value="3"> Familje pizza
                     </label>
                     <br/>
+                    <label class="pizza-amount-input"></label>
+                        Antal: <input type="number" class="pizza-amount" name="pizza-amount-<%= pizza.id %>" id="pizza-amount-<%= pizza.id %>" value="1">
+                    </label>
                     <br/>
                     <button class="pizza-negative-button" onclick="showBuy('<%= pizza.id %>')">Avbryt</button>
                     <button class="pizza-positive-button" onclick="buy('<%= pizza.id %>', '<%= pizza.name %>')">Köp</button>
@@ -74,7 +78,7 @@
         var form = document.getElementById('order-form');
         document.getElementById('pizzaId').value = pizzaId;
         document.getElementById('size').value = getSelectedPizzaSize(pizzaId);
-        document.getElementById('amount').value = 1; // Set default count or dynamically set it
+        document.getElementById('amount').value = document.getElementById("pizza-amount-" + pizzaId).value;
         document.getElementById('add').value = [].join("&&&&")
         document.getElementById('sub').value = [].join("&&&&")
 

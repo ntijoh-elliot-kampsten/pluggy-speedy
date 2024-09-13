@@ -10,39 +10,80 @@
     </div>
     <div class="show-orders-order-list-container">
       <ul class="show-orders-order-list">
-        <%= for order <- orders do%>
-          <li class="show-orders-order-item">
-            <div class="show-order-item-collapse-button">&#9660</div>
-            <div class="show-order-item-order-id"><%=order.order_id%></div>
-            <div class="show-order-item-user-name"><%=order.user_name%></div>
-            <%= for pizzas <- order.order do%>
-              <div class="show-order-item-pizza-name"><%=pizzas.pizza_name%></div>
-            <% end%>
-            <div class="show-order-item-price">340 kr</div>
-            <div class="show-order-item-state"><%= order.state%></div>
-            <div class="collapsible-content" id="collapsible-content">
-              <p>test</p>
-            </div>
+        <%= for {order, index} <- Enum.with_index(orders) do%>
+          <li class="show-orders-order-item" id=<%="order-item#{index}"%>>
+            <span class="show-order-item-collapse-button" id=<%="#{index}"%>></span>
+            <span class="show-order-item-order-id"><%=order.order_id%></span>
+            <span class="show-order-item-user-name"><%=order.user_name%></span>
+            <span class="show-order-item-price"><%= order.total_price%> SEK</span>
+            <span class="show-order-item-state"><%= order.state%></span>
           </li>
+          <div class="collapsible-content" id=<%="collapsible-content#{index}"%>>
+            <ul class="show-order-collapsible-content-list">
+            <%= for pizzas <- order.order do%>
+              <li class="show-order-collapsible-content-list-item">
+                <p><%= pizzas.amount%>st <%=pizzas.pizza_name%></p>
+
+                <p>+
+                  <%= for {adds, adds_index} <- Enum.with_index(pizzas.add) do%>
+                    <%= if adds_index == length(pizzas.add)-1 do%>
+                      <%=adds%>
+                    <% else%>
+                      <%=adds%>,
+                    <% end%>
+                  <% end%>
+                </p>
+                <p>-
+                  <%= for {subs, subs_index} <- Enum.with_index(pizzas.sub) do%>
+                    <%= if subs_index == length(pizzas.sub)-1 do%>
+                      <%=subs%>
+                    <% else%>
+                      <%=subs%>,
+                    <% end%>
+                  <% end%>
+                </p>
+
+                <span><%= pizzas.price%> SEK</span>
+              </li>
+            <% end%>
+            </ul>
+            <div class="show-order-collapsible-content-info">
+              <span>
+                <%= order.total_price%> SEK
+              </span>
+              <button class="show-order-collapsible-content-change-status">Status</button>
+              <button class="show-order-collapsible-content-remove-order">Remove</button>
+            </div>
+          </div>
         <%end%>
       </ul>
     </div>
 </body>
 <script>
-var coll = document.getElementsByClassName("show-order-item-collapse-button");
-var content_element = document.getElementById("collapsible-content")
-var i;
+// Select all divs with the class "show-order-item-collapse-button"
+const buttonDivs = document.querySelectorAll('.show-order-item-collapse-button');
 
-for (i = 0; i < coll.length; i++) {
-  coll[i].addEventListener("click", function() {
+// Add a click event listener to each button-like div
+buttonDivs.forEach(div => {
+  div.addEventListener('click', function(event) {
+    // Get the clicked div (this is the div that was clicked)
+    const clickedDiv = event.currentTarget;
+
     this.classList.toggle("active");
-    var content = content_element;
-    if (content.style.display === "block") {
+    var content = document.getElementById("collapsible-content"+clickedDiv.id);
+    var list_item = document.getElementById("order-item"+clickedDiv.id)
+    if (content.style.display === "flex") {
       content.style.display = "none";
+
+      list_item.style.borderBottomLeftRadius = "10px";
+      list_item.style.borderBottomRightRadius = "10px";
     } else {
-      content.style.display = "block";
+      content.style.display = "flex";
+
+      list_item.style.borderBottomLeftRadius = "0px";
+      list_item.style.borderBottomRightRadius = "0px";
     }
   });
-}
+});
 </script>
 </html>

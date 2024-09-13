@@ -8,8 +8,6 @@ body {
 .show-orders-order-list-container {
     background-color: #1B263B;
     padding: 10px;
-    margin: 10px;
-    border-radius: 5px;
 }
 
 .show-orders-order-list {
@@ -20,25 +18,103 @@ body {
 .show-orders-order-item {
     background-color: #415A77;
     display: flex;
-    margin: 5px;
+    margin: 5px 5px 0px 5px;
     border: solid #0D1B2A 2px;
     border-radius: 10px;
 }
 
-.show-orders-order-item * {
-    display: inline-flex;
+.show-orders-order-item > span {
+    /* display: inline-flex; */
     justify-content: space-between;
     padding: 10px;
     border-right: solid #0D1B2A 2px;
     color: #E0E1DD;
     font-weight: bold;
+    margin: 0;
 }
 
 .show-order-item-collapse-button:hover {
     cursor: pointer;
 }
 
+.show-order-collapsible-content-list {
+    list-style: decimal;
+    padding: 0;
+    width: 100%;
+}
+
+.show-order-collapsible-content-list-item {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 20px 10px 20px;
+}
+
+.show-order-collapsible-content-list-item p {
+    margin: 0;
+}
+
+.show-order-collapsible-content-info {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.show-order-collapsible-content-change-status {
+    padding: 10px;
+    margin: 10px;
+    border: solid #0D1B2A 2px;
+    border-radius: 5px;
+    color: #E0E1DD;
+    font-weight: bold;
+    background-color: rgb(0, 115, 255);
+    transition: 0.3s;
+    transition-timing-function: ease;
+}
+
+.show-order-collapsible-content-change-status:hover {
+    cursor: pointer;
+    background-color: rgb(0, 97, 216);
+}
+
+.show-order-collapsible-content-remove-order {
+    padding: 10px;
+    margin: 10px;
+    border: solid #0D1B2A 2px;
+    border-radius: 5px;
+    color: #E0E1DD;
+    font-weight: bold;
+    background-color: rgb(221, 0, 0);
+    transition: 0.3s;
+    transition-timing-function: ease;
+}
+
+.show-order-collapsible-content-remove-order:hover {
+    cursor: pointer;
+    background-color: rgb(201, 0, 0);
+}
+
 .collapsible-content {
     display: none;
     overflow: hidden;
+    background-color: #415A77;
+    border: solid #0D1B2A 2px;
+    border-top: none;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    margin: 0px 5px 5px 5px;
+    color: #E0E1DD;
+    flex-direction: column;
 }
+
+.show-order-item-collapse-button:after {
+    content: '\25BC';
+    color: white;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+  }
+  
+  .active:after {
+    content: "\25B2";
+  }

@@ -11,14 +11,22 @@ defmodule Pluggy.Router do
   plug(Plug.Static, at: "/", from: :pluggy)
   plug(:put_secret_key_base)
 
+  # plug(Plug.Session,
+  #   store: :cookie,
+  #   key: "_pluggy_session",
+  #   encryption_salt: "cookie store encryption salt",
+  #   signing_salt: "cookie store signing salt",
+  #   key_length: 64,
+  #   log: :debug,
+  #   secret_key_base: "-- LONG STRING WITH AT LEAST 64 BYTES -- LONG STRING WITH AT LEAST 64 BYTES --"
+  # )
+
   plug(Plug.Session,
     store: :cookie,
-    key: "_pluggy_session",
+    key: "_my_app_session",
     encryption_salt: "cookie store encryption salt",
     signing_salt: "cookie store signing salt",
-    key_length: 64,
-    log: :debug,
-    secret_key_base: "-- LONG STRING WITH AT LEAST 64 BYTES -- LONG STRING WITH AT LEAST 64 BYTES --"
+    log: :debug
   )
 
   plug(:fetch_session)
@@ -51,8 +59,16 @@ defmodule Pluggy.Router do
   # # should be delete /fruits/:id, but put/patch/delete are not supported without hidden inputs
   # post("/fruits/:id/destroy", do: FruitController.destroy(conn, id))
 
+  # User management routes
+  get("/login", do: UserController.login_form(conn))
+  get("/signup", do: UserController.signup_form(conn)) # Ensure signup_form/1 is defined
+  get("/change_password", do: UserController.change_password_form(conn)) # Ensure change_password_form/1 is defined
   post("/users/login", do: UserController.login(conn, conn.body_params))
   post("/users/logout", do: UserController.logout(conn))
+  post("/users/signup", do: UserController.signup(conn, conn.body_params)) # Ensure signup/2 is defined
+  post("/users/change_password", do: UserController.change_password(conn, conn.body_params)) # Ensure change_password/2 is defined
+
+
 
   match _ do
     send_resp(conn, 404, "oops")
@@ -64,4 +80,6 @@ defmodule Pluggy.Router do
       "-- LONG STRING WITH AT LEAST 64 BYTES LONG STRING WITH AT LEAST 64 BYTES --"
     )
   end
+
+
 end
