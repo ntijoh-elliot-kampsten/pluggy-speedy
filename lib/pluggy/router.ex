@@ -12,14 +12,12 @@ defmodule Pluggy.Router do
   plug(:put_secret_key_base)
 
   plug(Plug.Session,
-    store: :cookie,
-    key: "_pluggy_session",
-    encryption_salt: "cookie store encryption salt",
-    signing_salt: "cookie store signing salt",
-    key_length: 64,
-    log: :debug,
-    secret_key_base: "-- LONG STRING WITH AT LEAST 64 BYTES -- LONG STRING WITH AT LEAST 64 BYTES --"
-  )
+  store: :cookie,
+  key: "_my_app_session",
+  encryption_salt: "cookie store encryption salt",
+  signing_salt: "cookie store signing salt",
+  log: :debug
+)
 
   plug(:fetch_session)
   plug(Plug.Parsers, parsers: [:urlencoded, :multipart])
@@ -51,7 +49,11 @@ defmodule Pluggy.Router do
   # # should be delete /fruits/:id, but put/patch/delete are not supported without hidden inputs
   # post("/fruits/:id/destroy", do: FruitController.destroy(conn, id))
 
+  # User management routes
+  get("/login", do: UserController.show_login_form(conn))
   post("/users/login", do: UserController.login(conn, conn.body_params))
+  get("/signup", do: UserController.show_signup_form(conn))
+  post("/users/signup", do: UserController.sign_up(conn, conn.body_params))
   post("/users/logout", do: UserController.logout(conn))
 
   match _ do
@@ -64,4 +66,6 @@ defmodule Pluggy.Router do
       "-- LONG STRING WITH AT LEAST 64 BYTES LONG STRING WITH AT LEAST 64 BYTES --"
     )
   end
+
+
 end
