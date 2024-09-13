@@ -43,6 +43,8 @@
                         </div>
                         <% end %>
                     <% end %>
+                <% else %>
+                    <h2>Din korg är tom!</h2>
                 <% end %>
             </div>
         </div>
