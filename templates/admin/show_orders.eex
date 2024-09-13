@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="../pluggy.css">
+  <link rel="stylesheet" type="text/css" href="/pluggy.css">
 </head>
 <body>
     <div class="show-orders-navbar">
@@ -53,8 +53,16 @@
               <span>
                 <%= order.total_price%> SEK
               </span>
-              <button type="button" class="show-order-collapsible-content-change-status" id="change-state" onclick="changeState('<%= order.state %>', '<%= order.order_id %>')">Status</button>
-              <button type="button" class="show-order-collapsible-content-remove-order" id="remove-order" onclick="removeOrder('<%= order.order_id %>')">Remove</button>
+              <form id="change-state-form" action="/order/change-state" method="POST">
+                <input type="hidden" name="order_id" id="order_id" value="<%=order.order_id%>">
+                <input type="hidden" name="new_state" id="new_state" value="<%=Pluggy.Order.get_new_state(order.state)%>">
+                <button type="submit" class="show-order-collapsible-content-change-status" id="change-state">Status</button>
+              </form>
+              
+              <form id="remove-order-form" action="/order/remove-order" method="POST">
+                <input type="hidden" name="order_id" id="remove_order_id" value="<%=order.order_id%>">
+                <button type="submit" class="show-order-collapsible-content-remove-order" id="remove-order">Remove</button>
+              </form>
             </div>
           </div>
         <%end%>
@@ -62,47 +70,9 @@
     </div>
 </body>
 
-<form id="change-state-form" action="/order/change-state" method="POST" style="display: none;">
-  <input type="hidden" name="order_id" id="order_id">
-  <input type="hidden" name="new_state" id="new_state">
-</form>
 
-<form id="remove-order-form" action="/order/remove-order" method="POST" style="display: none;">
-  <input type="hidden" name="order_id" id="order_id">
-</form>
 
 <script>
-function changeState(currentState, order_id) {
-  var new_state;
-  switch(currentState) {
-    case "Registered":
-      new_state = "Making";
-      break;
-    case "Making":
-      new_state = "Done";
-      break;
-    case "Done":
-      console.log("Already done");
-      break;
-    default:
-      console.log("ERROR state not found: " + currentState);
-  }
-
-  var form = document.getElementById('change-state-form');
-  document.getElementById('order_id').value = order_id;
-  document.getElementById('new_state').value = new_state;
-
-  // Submit the form like a normal POST
-  form.submit();
-};
-
-function removeOrder(order_id) {
-  var form = document.getElementById('remove-order-form');
-  document.getElementById('order_id').value = order_id;
-
-  // Submit the form like a normal POST
-  form.submit();
-};
 
 // Select all divs with the class "show-order-item-collapse-button"
 const buttonDivs = document.querySelectorAll('.show-order-item-collapse-button');
