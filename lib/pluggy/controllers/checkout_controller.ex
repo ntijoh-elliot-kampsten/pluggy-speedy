@@ -3,6 +3,7 @@ defmodule Pluggy.CheckoutController do
 
   alias Pluggy.Checkout
   alias Pluggy.User
+  alias Pluggy.Order
   import Pluggy.Template, only: [render: 2]
   import Plug.Conn, only: [send_resp: 3, put_resp_content_type: 2]
 
@@ -16,7 +17,7 @@ defmodule Pluggy.CheckoutController do
       end
 
     # Ensure orders is always a list
-    orders = Pluggy.Checkout.get_current_order(1) || []
+    orders = Order.get_user_unsubmitted_order_parsed(current_user) || []
 
     # Calculate the total amount safely
     total_amount =
