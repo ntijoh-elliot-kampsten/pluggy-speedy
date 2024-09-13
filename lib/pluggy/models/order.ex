@@ -24,7 +24,7 @@ defmodule Pluggy.Order do
       DB,
       "UPDATE orders SET \"current_order\" = $1 WHERE user_name = $2 AND state = ''",
       [build_updated_order_string(
-        Enum.at(get_user_unsubmitted_order(user_name), 0).order,
+        Enum.at(get_user_unsubmitted_order_parsed(user_name), 0).order,
         Helper.safe_string_to_integer(params["pizzaId"]),
         Helper.safe_string_to_integer(params["size"]),
         Helper.safe_string_to_integer(params["amount"]),
@@ -137,7 +137,8 @@ defmodule Pluggy.Order do
     for [id, add, sub, price, pizza_count, size] <- rows, do: %Order{pizza_id: id, add: add, sub: sub, price: price, pizza_count: pizza_count, size: size}
   end
 
-  def get_user_unsubmitted_order(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).rows |> parse_data
+  def get_user_unsubmitted_order_parsed(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).rows |> parse_data
+  def get_user_unsubmitted_order(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).rows
 
   def user_unsubmitted_order_exist(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).num_rows != 0
 

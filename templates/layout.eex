@@ -8,11 +8,16 @@
 </head>
 <body>
     <header>
-        <img id="user-logo" src="/images/user-logo.png" alt="" onClick="window.location.href = '/login'">
+        <div id="user-logo-container">
+            <img id="user-logo" src="/images/user-logo.png" alt="" onClick="window.location.href = '/login'">
+            <p id="user-text"><%= user_name %></p>
+        </div>
         <img id="tonys-pizza-logo" src="/images/tonys-pizza-logo.svg" alt="" onClick="window.location.href = '/main'">
         <div id="checkout-basket-container">
             <img id="checkout-basket" src="/images/tonys-pizza-basket.svg" alt="" onClick="window.location.href = '/checkout'">
-            <div id="checkout-basket-counter"></div>
+            <%= if basket_amount > 0 do %>
+                <div id="checkout-basket-counter"><%= basket_amount %></div>
+            <% end %>
         </div>
     </header>
 	<%= template %>
