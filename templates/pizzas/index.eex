@@ -30,7 +30,7 @@
                     </label>
                     <br/>
                     <label class="pizza-amount-input"></label>
-                        Mängd: <input type="number" name="pizza-amount-<%= pizza.id %>" id="pizza-amount-<%= pizza.id %>" value="1">
+                        Antal: <input type="number" class="pizza-amount" name="pizza-amount-<%= pizza.id %>" id="pizza-amount-<%= pizza.id %>" value="1">
                     </label>
                     <br/>
                     <button class="pizza-negative-button" onclick="showBuy('<%= pizza.id %>')">Avbryt</button>
