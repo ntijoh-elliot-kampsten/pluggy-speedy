@@ -61,14 +61,14 @@ defmodule Pluggy.Router do
   # # should be delete /fruits/:id, but put/patch/delete are not supported without hidden inputs
   # post("/fruits/:id/destroy", do: FruitController.destroy(conn, id))
 
-  # User management routes
-  get("/login", do: UserController.login_form(conn))
-  get("/signup", do: UserController.signup_form(conn)) # Ensure signup_form/1 is defined
-  get("/change_password", do: UserController.change_password_form(conn)) # Ensure change_password_form/1 is defined
-  post("/users/login", do: UserController.login(conn, conn.body_params))
-  post("/users/logout", do: UserController.logout(conn))
-  post("/users/signup", do: UserController.signup(conn, conn.body_params)) # Ensure signup/2 is defined
-  post("/users/change_password", do: UserController.change_password(conn, conn.body_params)) # Ensure change_password/2 is defined
+# User management routes
+get("/login", do: UserController.login_form(conn))
+get("/signup", do: UserController.signup_form(conn))
+get("/change_password", do: UserController.change_password_form(conn))
+post("/users/login", do: UserController.login(conn, conn.body_params))
+post("/users/logout", do: UserController.logout(conn)) # This is correct
+post("/users/signup", do: UserController.signup(conn, conn.body_params))
+post("/users/change_password", do: UserController.change_password(conn, conn.body_params))
 
 
 

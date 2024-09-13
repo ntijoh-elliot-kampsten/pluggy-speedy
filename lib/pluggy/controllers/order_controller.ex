@@ -4,7 +4,7 @@ defmodule Pluggy.OrderController do
   alias Pluggy.Pizza
   alias Pluggy.Order
   alias Pluggy.User
-  import Pluggy.Template, only: [render: 2, render: 3]
+  import Pluggy.Template, only: [render: 4, render: 3]
   import Plug.Conn, only: [send_resp: 3]
 
   # def index(conn) do
@@ -20,7 +20,7 @@ defmodule Pluggy.OrderController do
   # end
 
   def show_orders(conn) do
-    send_resp(conn, 200, render("admin/show_orders", [orders: Order.all()], false))
+    send_resp(conn, 200, render(conn, "admin/show_orders", [orders: Order.all()], false))
   end
 
   #render använder eex
