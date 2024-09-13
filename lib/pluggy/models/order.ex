@@ -124,6 +124,19 @@ defmodule Pluggy.Order do
     # end)
   end
 
+  def get_size(size) do
+    test = case size do
+      1 ->
+        "Liten"
+      2 ->
+        "Stor"
+      3 ->
+        "Familjepizza"
+      _ ->
+        "Storlek hittades ej"
+    end
+  end
+
   def get_full_order_data(rows, index, map_pos) do
     Enum.at(Enum.map(rows, &(Enum.at(&1, map_pos))), index)
   end
@@ -133,6 +146,7 @@ defmodule Pluggy.Order do
 
     return_value = Enum.map(0..length(order_map)-1, fn(k) ->
       orders = Enum.at(order_map, k)
+      new_map = %{orders | size: get_size(orders.size)}
       pizza_id = orders.pizza_id
 
       query = """
@@ -140,7 +154,7 @@ defmodule Pluggy.Order do
       """
 
       pizza_name = Postgrex.query!(DB, query, [pizza_id]).rows
-      Map.put(orders, :pizza_name, Enum.at(Enum.at(pizza_name, 0), 0))
+      Map.put(new_map, :pizza_name, Enum.at(Enum.at(pizza_name, 0), 0))
     end)
 
     return_value

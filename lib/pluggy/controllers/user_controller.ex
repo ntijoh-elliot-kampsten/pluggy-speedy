@@ -34,13 +34,14 @@ defmodule Pluggy.UserController do
     send_resp(
       conn,
       200,
-      Pluggy.Template.render("pizzas/login", [], false)
+      Pluggy.Template.render(conn, "pizzas/login", [], false)
     )
   end
 
   def logout(conn) do
-    Plug.Conn.configure_session(conn, drop: true) #tömmer sessionen
-    |> redirect("/login")
+    conn
+    |> Plug.Conn.configure_session(drop: true) # Drops the session to log out the user
+    |> redirect("/login") # Redirects to the login page after logout
   end
 
   # def create(conn, params) do
@@ -67,7 +68,7 @@ defmodule Pluggy.UserController do
     send_resp(
       conn,
       200,
-      Pluggy.Template.render("pizzas/signup", [], false)
+      Pluggy.Template.render(conn, "pizzas/signup", [], false)
     )
   end
 
@@ -97,7 +98,7 @@ defmodule Pluggy.UserController do
     send_resp(
       conn,
       200,
-      Pluggy.Template.render("pizzas/change_password", [], false)
+      Pluggy.Template.render(conn, "pizzas/change_password", [], false)
     )
   end
 
