@@ -3,8 +3,8 @@ defmodule Pluggy.CheckoutController do
 
   alias Pluggy.Checkout
   alias Pluggy.User
-  import Pluggy.Template, only: [render: 2]
-  import Plug.Conn, only: [send_resp: 3, put_resp_content_type: 2]
+  import Pluggy.Template, only: [render: 4, render: 3]
+  import Plug.Conn, only: [send_resp: 3]
 
   def index(conn) do
     session_user = conn.private.plug_session["user_id"]
@@ -26,7 +26,7 @@ defmodule Pluggy.CheckoutController do
         acc + ((pizza.amount || 0) * (pizza.price || 0.0)) # Default to 0 if nil
       end)
 
-    send_resp(conn, 200, render("pizzas/checkout", user: current_user, orders: orders, total_amount: total_amount))
+    send_resp(conn, 200, render(conn, "pizzas/checkout", user: current_user, orders: orders, total_amount: total_amount))
   end
 
 
@@ -72,7 +72,7 @@ defmodule Pluggy.CheckoutController do
     send_resp(
       conn,
       200,
-      Pluggy.Template.render("pizzas/confirmation", user: current_user, orders: orders, total_amount: total_amount)
+      Pluggy.Template.render(conn, "pizzas/confirmation", user: current_user, orders: orders, total_amount: total_amount)
     )
   end
 
