@@ -16,7 +16,6 @@ defmodule Pluggy.Checkout do
     else
       result
       |> Order.parse_data()
-      |> get_pizza_name()
     end
   end
 

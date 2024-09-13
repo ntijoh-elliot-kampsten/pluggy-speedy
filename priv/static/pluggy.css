@@ -95,7 +95,7 @@ body {
 }
 
 .collapsible-content {
-    display: flex;
+    display: none;
     overflow: hidden;
     background-color: #415A77;
     border: solid #0D1B2A 2px;

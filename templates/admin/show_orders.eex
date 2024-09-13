@@ -15,7 +15,7 @@
             <span class="show-order-item-collapse-button" id=<%="#{index}"%>></span>
             <span class="show-order-item-order-id"><%=order.order_id%></span>
             <span class="show-order-item-user-name"><%=order.user_name%></span>
-            <span class="show-order-item-price">340 SEK</span>
+            <span class="show-order-item-price"><%= order.total_price%> SEK</span>
             <span class="show-order-item-state"><%= order.state%></span>
           </li>
           <div class="collapsible-content" id=<%="collapsible-content#{index}"%>>
@@ -43,17 +43,13 @@
                   <% end%>
                 </p>
 
-                <span><%= pizzas.total_cost_for_pizza%> SEK</span>
+                <span><%= pizzas.calculated_price_for_pizza%> SEK</span>
               </li>
             <% end%>
             </ul>
             <div class="show-order-collapsible-content-info">
               <span>
-                <% total_cost = 0%>
-                <%= for pizzas <- order.order do %>
-                  <% total_cost = total_cost + pizzas.total_cost_for_pizza%>
-                <% end%>
-                <%= total_cost%> SEK
+                <%= order.total_price%> SEK
               </span>
               <button class="show-order-collapsible-content-change-status">Status</button>
               <button class="show-order-collapsible-content-remove-order">Remove</button>

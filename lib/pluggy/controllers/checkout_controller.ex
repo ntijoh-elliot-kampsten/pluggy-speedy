@@ -1,6 +1,7 @@
 defmodule Pluggy.CheckoutController do
   require IEx
 
+  alias Pluggy.Pizza
   alias Pluggy.Checkout
   alias Pluggy.User
   import Pluggy.Template, only: [render: 2]
@@ -16,17 +17,18 @@ defmodule Pluggy.CheckoutController do
       end
 
     # Ensure orders is always a list
-    orders = Pluggy.Checkout.get_current_order(1) || []
+    orders = Pluggy.Checkout.get_current_order(-1) || []
 
     # Calculate the total amount safely
-    total_amount =
-      orders
-      |> Enum.flat_map(&(&1.order || [])) # Ensure `order` is not nil
-      |> Enum.reduce(0.0, fn pizza, acc ->
-        acc + ((pizza.amount || 0) * (pizza.price || 0.0)) # Default to 0 if nil
-      end)
+    # order =
+    #   orders
+    #   |> Enum.flat_map(&(&1.order || [])) # Ensure `order` is not nil
 
-    send_resp(conn, 200, render("pizzas/checkout", user: current_user, orders: orders, total_amount: total_amount))
+    order_list = Enum.at(orders, 0)
+    order_map = Enum.at(order_list.order, 0)
+    IO.inspect(order_list)
+
+    send_resp(conn, 200, render("pizzas/checkout", user: current_user, orders: orders, total_amount: order_list.total_price))
   end
 
 
