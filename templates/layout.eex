@@ -5,8 +5,6 @@
 	<title>Welcome to Pluggy</title>
 	<link rel="stylesheet" type="text/css" href="/pluggy.css">
 	<link rel="stylesheet" type="text/css" href="/layout.css">
-    <link rel="stylesheet" type="text/css" href="/index.css">
-    <link rel="stylesheet" type="text/css" href="/customize.css">
 </head>
 <body>
     <header>
@@ -14,7 +12,7 @@
         <img id="tonys-pizza-logo" src="/images/tonys-pizza-logo.svg" alt="" onClick="window.location.href = '/main'">
         <div id="checkout-basket-container">
             <img id="checkout-basket" src="/images/tonys-pizza-basket.svg" alt="" onClick="window.location.href = '/checkout'">
-            <div id="checkout-basket-counter">20</div>
+            <div id="checkout-basket-counter"></div>
         </div>
     </header>
 	<%= template %>
