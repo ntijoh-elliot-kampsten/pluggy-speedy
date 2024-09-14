@@ -18,14 +18,11 @@ defmodule Pluggy.Order do
   end
 
   def update_order(conn, params) do
-    user_name = "Carl Svensson"
-
-    # Insert the new updated order into the database
     Postgrex.query!(
       DB,
       "UPDATE orders SET \"current_order\" = $1 WHERE user_name = $2 AND state = ''",
       [build_updated_order_string(
-        Enum.at(get_user_unsubmitted_order_parsed(user_name), 0).order,
+        Enum.at(get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]), 0).order,
         Helper.safe_string_to_integer(params["pizzaId"]),
         Helper.safe_string_to_integer(params["size"]),
         Helper.safe_string_to_integer(params["amount"]),
@@ -39,7 +36,7 @@ defmodule Pluggy.Order do
         else
           []
         end
-      ), user_name]
+      ), conn.private.plug_session["user_name"]]
     )
   end
 
@@ -48,18 +45,15 @@ defmodule Pluggy.Order do
   end
 
   def create(conn, params) do
-    user_id = 1
-    user_name = "Carl Svensson"
-
     cond do
-      user_unsubmitted_order_exist(user_name) ->
+      user_unsubmitted_order_exist(conn.private.plug_session["user_name"]) ->
         update_order(conn, params)
       true ->
         # Insert the order into the database
         Postgrex.query!(
           DB,
           "INSERT INTO orders (user_id, user_name, current_order, state) VALUES ($1, $2, $3, $4)",
-          [user_id, user_name, build_new_order_string(
+          [conn.private.plug_session["user_id"], conn.private.plug_session["user_name"], build_new_order_string(
             Helper.safe_string_to_integer(params["pizzaId"]),
             Helper.safe_string_to_integer(params["size"]),
             Helper.safe_string_to_integer(params["amount"]),
@@ -100,6 +94,7 @@ defmodule Pluggy.Order do
     %Order{pizza_id: id, add: add, sub: sub, price: price, pizza_count: pizza_count, size: size}
   end
 
+  def parse_data([]), do: []
   def parse_data(rows) do
     # Gets orders and parses it
     order_list = Enum.map(rows, &(Enum.at(&1, 3)))
@@ -123,6 +118,10 @@ defmodule Pluggy.Order do
     #   acc + ((pizza.amount || 0) * (pizza.price || 0.0)) # Default to 0 if nil
     # end)
   end
+
+  def get_total_price2(order, price \\ 0)
+  def get_total_price2([], price), do: price
+  def get_total_price2([head | tail], price), do: get_total_price2(tail, price + head.price)
 
   def get_size(size) do
     test = case size do
@@ -164,7 +163,7 @@ defmodule Pluggy.Order do
     for [id, add, sub, price, pizza_count, size] <- rows, do: %Order{pizza_id: id, add: add, sub: sub, price: price, pizza_count: pizza_count, size: size}
   end
 
-  def get_user_unsubmitted_order_parsed(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).rows |> parse_data
+  def get_user_unsubmitted_order_parsed(user_name), do: get_user_unsubmitted_order(user_name) |> parse_data
   def get_user_unsubmitted_order(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).rows
 
   def user_unsubmitted_order_exist(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).num_rows != 0
