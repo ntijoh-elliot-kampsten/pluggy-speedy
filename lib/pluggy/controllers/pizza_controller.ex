@@ -1,6 +1,7 @@
 defmodule Pluggy.PizzaController do
   require IEx
 
+  alias Pluggy.Ingredient
   alias Pluggy.Pizza
   alias Pluggy.Order
   alias Pluggy.User
@@ -20,10 +21,12 @@ defmodule Pluggy.PizzaController do
   end
 
   #render använder eex
+
   def new(conn), do: send_resp(conn, 200, render(conn, "pizzas/new", []))
   def show(conn, id), do: send_resp(conn, 200, render(conn, "pizzas/show", pizza: Pizza.get(id)))
   def edit(conn, id), do: send_resp(conn, 200, render(conn, "pizzas/edit", pizza: Pizza.get(id)))
-  def customize(conn, id), do: send_resp(conn, 200, render(conn, "/pizzas/customize", pizza: Pizza.get(id)))
+  def customize(conn, id), do: send_resp(conn, 200, render(conn, "/pizzas/customize", pizza: Pizza.get(id), all_ingredients: Ingredient.all()))
+
 
   def create(conn, params) do
     Pizzas.create(params)

@@ -29,6 +29,16 @@ defmodule Pluggy.OrderController do
   # def edit(conn, id), do: send_resp(conn, 200, render("pizzas/edit", pizza: Pizza.get(id)))
   # def customize(conn, id), do: send_resp(conn, 200, render("/pizzas/customize", pizza: Pizza.get(id)))
 
+  def remove_order(conn, params) do
+    Order.remove_order(conn, params)
+    redirect(conn, "/orders")
+  end
+
+  def change_state(conn, params) do
+    Order.change_state(conn, params)
+    redirect(conn, "/orders")
+  end
+
   def create(conn, params) do
     Order.create(conn, params)
     redirect(conn, "/main")

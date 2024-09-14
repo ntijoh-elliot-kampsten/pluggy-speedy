@@ -21,4 +21,28 @@
 #ingredients_list{
     display: flex;
     flex-direction: column;
+    
+}
+
+#ingredient_holder{
+    display: flex;
+    flex-direction: column;
+}
+
+
+#stiligt{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#buyclass{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10vh;
+   
+   
+    
 }

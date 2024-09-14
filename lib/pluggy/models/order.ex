@@ -5,6 +5,8 @@ defmodule Pluggy.Order do
   alias Pluggy.Pizza
   alias Pluggy.Helper
 
+  @states %{"Registered" => "Making", "Making" => "Done"}
+
   def all do
     Postgrex.query!(DB, "SELECT * FROM orders ORDER BY id", []).rows
     |> parse_data
@@ -14,7 +16,7 @@ defmodule Pluggy.Order do
   def get(id) do
     Postgrex.query!(DB, "SELECT * FROM orders WHERE id = $1 LIMIT 1", [Helper.safe_string_to_integer(id)]
     ).rows
-    |> to_struct
+    |> parse_data
   end
 
   def update_order(conn, params) do
@@ -40,8 +42,29 @@ defmodule Pluggy.Order do
     )
   end
 
-  def update_state() do
+  def change_state(_conn, params) do
+    IO.inspect(params)
+    query = """
+    UPDATE orders SET \"state\" = $1 WHERE id = $2
+    """
 
+    Postgrex.query!(
+      DB,
+      query,
+      [params["new_state"], String.to_integer(params["order_id"])]
+    )
+  end
+
+  def remove_order(_conn, params) do
+    IO.inspect(params)
+    query = """
+    DELETE FROM orders WHERE id = $1
+    """
+    Postgrex.query!(
+      DB,
+      query,
+      [String.to_integer(params["order_id"])]
+    )
   end
 
   def create(conn, params) do
@@ -134,6 +157,10 @@ defmodule Pluggy.Order do
       _ ->
         "Storlek hittades ej"
     end
+  end
+
+  def get_new_state(currentState) do
+    Map.get(@states, currentState, "Undefined")
   end
 
   def get_full_order_data(rows, index, map_pos) do

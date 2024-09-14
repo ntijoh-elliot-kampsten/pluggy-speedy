@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="../pluggy.css">
+  <link rel="stylesheet" type="text/css" href="/show_orders.css">
 </head>
 <body>
     <div class="show-orders-navbar">
@@ -11,55 +11,69 @@
     <div class="show-orders-order-list-container">
       <ul class="show-orders-order-list">
         <%= for {order, index} <- Enum.with_index(orders) do%>
-          <li class="show-orders-order-item" id=<%="order-item#{index}"%>>
-            <span class="show-order-item-collapse-button" id=<%="#{index}"%>></span>
-            <span class="show-order-item-order-id"><%=order.order_id%></span>
-            <span class="show-order-item-user-name"><%=order.user_name%></span>
-            <span class="show-order-item-price"><%= order.total_price%> SEK</span>
-            <span class="show-order-item-state"><%= order.state%></span>
-          </li>
-          <div class="collapsible-content" id=<%="collapsible-content#{index}"%>>
-            <ul class="show-order-collapsible-content-list">
-            <%= for pizzas <- order.order do%>
-              <li class="show-order-collapsible-content-list-item">
-                <p><%= pizzas.amount%>st <%=pizzas.pizza_name%> - <%= pizzas.size%></p>
+          <%= if order.state != "" do%>
+            <li class="show-orders-order-item" id=<%="order-item#{index}"%>>
+              <span class="show-order-item-collapse-button" id=<%="#{index}"%>></span>
+              <span class="show-order-item-order-id"><%=order.order_id%></span>
+              <span class="show-order-item-user-name"><%=order.user_name%></span>
+              <span class="show-order-item-price"><%= order.total_price%> SEK</span>
+              <span class="show-order-item-state"><%= order.state%></span>
+            </li>
+            <div class="collapsible-content" id=<%="collapsible-content#{index}"%>>
+              <ul class="show-order-collapsible-content-list">
+              <%= for pizzas <- order.order do%>
+                <li class="show-order-collapsible-content-list-item">
+                  <p><%= pizzas.amount%>st <%=pizzas.pizza_name%> - <%= pizzas.size%></p>
 
-                <p>+
-                  <%= for {adds, adds_index} <- Enum.with_index(pizzas.add) do%>
-                    <%= if adds_index == length(pizzas.add)-1 do%>
-                      <%=adds%>
-                    <% else%>
-                      <%=adds%>,
+                  <p>+
+                    <%= for {adds, adds_index} <- Enum.with_index(pizzas.add) do%>
+                      <%= if adds_index == length(pizzas.add)-1 do%>
+                        <%=adds%>
+                      <% else%>
+                        <%=adds%>,
+                      <% end%>
                     <% end%>
-                  <% end%>
-                </p>
-                <p>-
-                  <%= for {subs, subs_index} <- Enum.with_index(pizzas.sub) do%>
-                    <%= if subs_index == length(pizzas.sub)-1 do%>
-                      <%=subs%>
-                    <% else%>
-                      <%=subs%>,
+                  </p>
+                  <p>-
+                    <%= for {subs, subs_index} <- Enum.with_index(pizzas.sub) do%>
+                      <%= if subs_index == length(pizzas.sub)-1 do%>
+                        <%=subs%>
+                      <% else%>
+                        <%=subs%>,
+                      <% end%>
                     <% end%>
-                  <% end%>
-                </p>
+                  </p>
 
-                <span><%= pizzas.price%> SEK</span>
-              </li>
+                  <span><%= pizzas.price%> SEK</span>
+                </li>
+              <% end%>
             <% end%>
             </ul>
             <div class="show-order-collapsible-content-info">
               <span>
                 <%= order.total_price%> SEK
               </span>
-              <button class="show-order-collapsible-content-change-status">Status</button>
-              <button class="show-order-collapsible-content-remove-order">Remove</button>
+              <form id="change-state-form" action="/order/change-state" method="POST">
+                <input type="hidden" name="order_id" id="order_id" value="<%=order.order_id%>">
+                <input type="hidden" name="new_state" id="new_state" value="<%=Pluggy.Order.get_new_state(order.state)%>">
+                <button type="submit" class="show-order-collapsible-content-change-status" id="change-state">Status</button>
+              </form>
+              
+              <form id="remove-order-form" action="/order/remove-order" method="POST">
+                <input type="hidden" name="order_id" id="remove_order_id" value="<%=order.order_id%>">
+                <button type="submit" class="show-order-collapsible-content-remove-order" id="remove-order">Remove</button>
+              </form>
             </div>
           </div>
         <%end%>
       </ul>
     </div>
 </body>
+
+
+
 <script>
+
 // Select all divs with the class "show-order-item-collapse-button"
 const buttonDivs = document.querySelectorAll('.show-order-item-collapse-button');
 

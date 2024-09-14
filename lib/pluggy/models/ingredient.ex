@@ -1,5 +1,5 @@
 defmodule Pluggy.Ingredient do
-  defstruct(id: nil, name: "", price: nil)
+  defstruct( name: "", price: nil)
 
   alias Pluggy.Ingredient
 
@@ -8,11 +8,7 @@ defmodule Pluggy.Ingredient do
     |> to_struct_list
   end
 
-  def get(id) do
-    Postgrex.query!(DB, "SELECT * FROM ingredients WHERE id = $1 LIMIT 1", [String.to_integer(id)]
-    ).rows
-    |> to_struct
-  end
+
 
   def get_by_name(name) do
     Postgrex.query!(DB, "SELECT * FROM ingredients WHERE name = $1 LIMIT 1", [name]
@@ -41,22 +37,20 @@ defmodule Pluggy.Ingredient do
   #   Postgrex.query!(DB, "INSERT INTO pizzas (name, ingredients, price) VALUES ($1, $2, $3)", [name, ingredients, price])
   # end
 
-  def delete(id) do
-    Postgrex.query!(DB, "DELETE FROM ingredients WHERE id = $1", [String.to_integer(id)])
+  def delete(name) do
+    Postgrex.query!(DB, "DELETE FROM ingredients WHERE name = $1", [name])
   end
 
-  def to_struct([[id, name, price]]) do
+  def to_struct([[ name, price]]) do
     %Ingredient{
-      id: id,
       name: name,
       price: price
     }
   end
 
   def to_struct_list(rows) do
-    for [id, name, price] <- rows do
+    for [ name, price] <- rows do
       %Ingredient{
-        id: id,
         name: name,
         price: price,
       }
