@@ -19,6 +19,7 @@
                 <div id="checkout-basket-counter"><%= basket_amount %></div>
             <% end %>
             <div id="checkout-basket-list-container">
+                <br/>
                 <%= if basket_amount > 0 do %>
                     <%= for order <- orders do %>
                         <%= for pizza <- order.order do %>
@@ -28,13 +29,27 @@
                                 <span><strong><%= pizza.pizza_name %></strong></span>
                                 <br/>
                                 <form action="/pizza/amount/update">
-                                    Antal: <input type="number" class="pizza-amount" name="pizza-checkout-basket-amount-<%= pizza.pizza_id %>" id="pizza-checkout-basket-amount-<%= pizza.pizza_id %>" value="<%= pizza.amount %>"> |
+                                    Antal: <input type="number" class="pizza-amount" name="pizza-checkout-basket-amount-<%= pizza.pizza_id %>" id="pizza-checkout-basket-amount-<%= pizza.pizza_id %>" value="<%= pizza.amount %>">
                                     <input type="hidden" name="pizzaId" value="<%= pizza.pizza_id %>">
                                     <input type="hidden" name="size" value="<%= pizza.size %>">
                                     <input type="hidden" name="add" value='<%= Enum.join(pizza.add, "&&&&") %>'>
                                     <input type="hidden" name="sub" value='<%= Enum.join(pizza.sub, "&&&&") %>'>
                                 </form>
-                                <span>Price:</span> <span>$<%= pizza.price %></span>
+                                <span>Storlek:</span> <span><%= pizza.size %></span>
+                                <br/>
+                                <%= if pizza.add != [] || pizza.sub != [] do %>
+                                <span>Ändringar:</span> 
+                                <br/>
+                                    <%= for add <- pizza.add do %>
+                                    <span class="checkout-basket-list-changed">+<%= add %></span>
+                                    <br/>
+                                    <% end %>
+                                    <%= for sub <- pizza.sub do %>
+                                    <span class="checkout-basket-list-changed">-<%= sub %></span>
+                                    <br/>
+                                    <% end %>
+                                <% end %>
+                                <span>Pris:</span> <span><%= pizza.price %> Kr</span>
                             </div>
                             <form action="/order/remove-order-part" method="post" style="display:inline;">
                                 <input type="hidden" name="pizzaId" value="<%= pizza.pizza_id %>">
@@ -44,6 +59,7 @@
                                 <button type="submit" class="remove-button">Remove</button>
                             </form>
                         </div>
+                        <br/>
                         <% end %>
                     <% end %>
                 <% else %>
