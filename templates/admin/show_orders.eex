@@ -25,24 +25,29 @@
                 <li class="show-order-collapsible-content-list-item">
                   <p><%= pizzas.amount%>st <%=pizzas.pizza_name%> - <%= pizzas.size%></p>
 
-                  <p>+
-                    <%= for {adds, adds_index} <- Enum.with_index(pizzas.add) do%>
-                      <%= if adds_index == length(pizzas.add)-1 do%>
-                        <%=adds%>
-                      <% else%>
-                        <%=adds%>,
+                  <%= if pizzas.add != [] do%>
+                    <p>+
+                      <%= for {adds, adds_index} <- Enum.with_index(pizzas.add) do%>
+                        <%= if adds_index == length(pizzas.add)-1 do%>
+                          <%=adds%>
+                        <% else%>
+                          <%=adds%>,
+                        <% end%>
                       <% end%>
-                    <% end%>
-                  </p>
-                  <p>-
-                    <%= for {subs, subs_index} <- Enum.with_index(pizzas.sub) do%>
-                      <%= if subs_index == length(pizzas.sub)-1 do%>
-                        <%=subs%>
-                      <% else%>
-                        <%=subs%>,
+                    </p>
+                  <% end%>
+
+                  <%= if pizzas.sub != [] do%>
+                    <p>-
+                      <%= for {subs, subs_index} <- Enum.with_index(pizzas.sub) do%>
+                        <%= if subs_index == length(pizzas.sub)-1 do%>
+                          <%=subs%>
+                        <% else%>
+                          <%=subs%>,
+                        <% end%>
                       <% end%>
-                    <% end%>
-                  </p>
+                    </p>
+                  <% end%>
 
                   <span><%= pizzas.price%> SEK</span>
                 </li>
