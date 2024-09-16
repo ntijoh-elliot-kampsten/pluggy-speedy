@@ -53,7 +53,7 @@ defmodule Pluggy.OrderController do
 
   def remove_order_part(conn, params) do
     Order.remove_order_part(conn, params)
-    redirect(conn, "/orders")
+    redirect(conn, params["oldLocation"])
   end
 
   def change_state(conn, params) do
