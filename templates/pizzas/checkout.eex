@@ -36,7 +36,7 @@
       <% end %>
         <!-- Display the total amount only if there are orders -->
   <%= if !Enum.empty?(orders) do %>
-    <p>Total Amount: <span id="total-amount">$<%= Float.round(total_amount, 2) %></span></p>
+    <p>Total Amount: <span id="total-amount">$<%= total_amount %></span></p>
   <% end %>
 
   <!-- Form to finalize the order -->

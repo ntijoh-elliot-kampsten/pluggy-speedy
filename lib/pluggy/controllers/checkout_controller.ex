@@ -16,18 +16,9 @@ defmodule Pluggy.CheckoutController do
         _ -> User.get(session_user)
       end
 
-    # Ensure orders is always a list
-    orders = Order.get_user_unsubmitted_order_parsed(current_user) || []
+    order = Order.get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"])
 
-    # Calculate the total amount safely
-    total_amount =
-      orders
-      |> Enum.flat_map(&(&1.order || [])) # Ensure `order` is not nil
-      |> Enum.reduce(0.0, fn pizza, acc ->
-        acc + ((pizza.amount || 0) * (pizza.price || 0.0)) # Default to 0 if nil
-      end)
-
-    send_resp(conn, 200, render(conn, "pizzas/checkout", user: current_user, orders: orders, total_amount: total_amount))
+    send_resp(conn, 200, render(conn, "pizzas/checkout", user: current_user, orders: order, total_amount: Order.get_total_price2(Enum.at(order, 0).order)))
   end
 
 
