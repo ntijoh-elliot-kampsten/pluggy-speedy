@@ -7,7 +7,11 @@
 </head>
 <body>
     <div class="show-orders-navbar">
+      <form method="POST" action="/order/searchbar" id="search-bar-form">
+        <input type="text" name="search_bar" id="search_bar" value="" placeholder="Sök på kunder">
+      </form>
     </div>
+
     <div class="show-orders-order-list-container">
       <ul class="show-orders-order-list">
         <%= for {order, index} <- Enum.with_index(orders) do%>
@@ -52,7 +56,7 @@
                   <span><%= pizzas.price%> SEK</span>
                 </li>
               <% end%>
-            </ul>
+              </ul>
             <div class="show-order-collapsible-content-info">
               <span>
                 <%= order.total_price%> SEK
@@ -78,6 +82,33 @@
 
 
 <script>
+var search_bar = document.getElementById('search_bar');
+
+function sendData() {
+  const input = search_bar.value;
+  document.getElementById("search-bar-form").submit();
+
+  // // Send a POST request to the Elixir backend
+  // fetch('/order/searchbar', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify({ query: input })
+  // })
+  // .then(response => response.json()) // Parse the JSON response
+  // .then(data => {
+  //   // Update the page with the response
+  //   console.log(data.message)
+  //   //document.getElementById('response').innerText = data.message;
+  // })
+  // .catch(error => {
+  //   console.error('Error:', error);
+  // });
+}
+
+search_bar.onchange = sendData;
+// search_bar.onblur = sendData;
 
 // Select all divs with the class "show-order-item-collapse-button"
 const buttonDivs = document.querySelectorAll('.show-order-item-collapse-button');

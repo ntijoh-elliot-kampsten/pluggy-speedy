@@ -40,6 +40,23 @@ defmodule Pluggy.OrderController do
     end
   end
 
+  def handleSearchInput(conn, params) do
+    result = Order.get_search_result(params)
+
+    session_user = conn.private.plug_session["user_id"]
+
+    current_user =
+      case session_user do
+        nil -> nil
+        _ -> User.get(session_user)
+      end
+
+    send_resp(conn, 200, render(conn, "admin/show_orders", [orders: result, user: current_user], false))
+
+    # Send a JSON response back to the client
+    #send_resp(conn, 200, Jason.encode!(%{message: result}))
+  end
+
   #render använder eex
   # def new(conn), do: send_resp(conn, 200, render("pizzas/new", []))
   # def show(conn, id), do: send_resp(conn, 200, render("pizzas/show", pizza: Pizza.get(id)))
