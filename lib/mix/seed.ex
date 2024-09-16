@@ -99,9 +99,9 @@ defmodule Mix.Tasks.Seed do
     Enum.each(0..amount_orders, fn(x) ->
 
       state = case :rand.uniform(3) do
-        1 -> "Registered"
-        2 -> "Making"
-        3 -> "Done"
+        1 -> "Registrerad"
+        2 -> "Görs"
+        3 -> "Färdig"
         _ -> "oops"
       end
 
