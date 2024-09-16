@@ -20,7 +20,6 @@ defmodule Pluggy.Order do
   end
 
   def update_order(conn, params) do
-    IO.inspect("yo")
     case pizza_in_order_exist(
       Enum.at(get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]), 0).order,
       Helper.safe_string_to_integer(params["pizzaId"]),
@@ -62,30 +61,6 @@ defmodule Pluggy.Order do
   end
 
   def update_amount(conn, params) do
-    # IO.inspect(if params["add"] && params["add"] != "" do
-    #   String.split(params["add"], "&&&&")
-    # else
-    #   []
-    # end)
-    IO.inspect(
-      build_updated_order_count_string(
-        Enum.at(get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]), 0).order,
-        Enum.count(Enum.at(get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]), 0).order),
-        Helper.safe_string_to_integer(params["pizzaId"]),
-        Helper.safe_string_to_integer(params["size"]),
-        if params["add"] && params["add"] != "" do
-          String.split(params["add"], "&&&&")
-        else
-          []
-        end,
-        if params["sub"] && params["sub"] != "" do
-          String.split(params["sub"], "&&&&")
-        else
-          []
-        end,
-        Helper.safe_string_to_integer(params["amount"])
-      )
-    )
     Postgrex.query!(
       DB,
       "UPDATE orders SET \"current_order\" = $1 WHERE user_name = $2 AND state = ''",
@@ -323,7 +298,7 @@ defmodule Pluggy.Order do
 
   def pizza_in_order_exist(order, pizza_id, size, add \\ [], sub \\ [])
   def pizza_in_order_exist([], _pizza_id, _size, _add, _sub), do: false
-  def pizza_in_order_exist([head | _tail], pizza_id, size, add, sub) when head.pizza_id == pizza_id and head.size == size and head.add == add and head.sub == sub, do: IO.inspect(true)
+  def pizza_in_order_exist([head | _tail], pizza_id, size, add, sub) when head.pizza_id == pizza_id and head.size == size and head.add == add and head.sub == sub, do: true
   def pizza_in_order_exist([_head | tail], pizza_id, size, add, sub), do: pizza_in_order_exist(tail, pizza_id, size, add, sub)
 
   def order_match(order, pizza_id, size, add \\ [], sub \\ [])
