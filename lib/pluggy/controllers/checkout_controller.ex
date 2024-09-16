@@ -17,9 +17,14 @@ defmodule Pluggy.CheckoutController do
         _ -> User.get(session_user)
       end
 
-    order = Order.get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"])
 
-    send_resp(conn, 200, render(conn, "pizzas/checkout", user: current_user, orders: order, total_amount: Order.get_total_price2(Enum.at(order, 0).order)))
+    unless Order.get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]) == [] do
+      order = Order.get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"])
+      send_resp(conn, 200, render(conn, "pizzas/checkout", user: current_user, orders: order, total_amount: Order.get_total_price2(Enum.at(order, 0).order)))
+    end
+    send_resp(conn, 200, render(conn, "pizzas/checkout", user: current_user, orders: [], total_amount: 0))
+
+
   end
 
 
