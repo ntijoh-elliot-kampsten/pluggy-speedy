@@ -47,13 +47,14 @@
 
 
 
-<form id="order-form" action="/order/add" method="POST" style="display: none;"></form>
+<form id="order-form" action="/order/add" method="POST" style="display: none;">
     <input type="hidden" name="pizzaId" id="pizzaId">
     <input type="hidden" name="size" id="size">
     <input type="hidden" name="amount" id="amount">
     <input type="hidden" name="add" id="add">
     <input type="hidden" name="sub" id="sub">
 </form>
+
 
 
 
@@ -171,8 +172,18 @@
         return null;
 
         }
+
+        async function set_values(pizzaId, pizzaName,addIngredients,subIngredients) {
+            
+            document.getElementById('pizzaId').value = pizzaId;
+            document.getElementById('size').value = getSelectedPizzaSize(pizzaId);
+            document.getElementById('amount').value = 1; // Set default count or dynamically set it
+            document.getElementById('add').value = addIngredients.join('&&&&'); // Join ingredients to be added
+            document.getElementById('sub').value = subIngredients.join('&&&&'); // Join ingredients to be subtracted
+            
+        }
         // Function to handle the purchase
-        function buy(pizzaId, pizzaName) {
+        async function buy(pizzaId, pizzaName) {
             console.log('Buy function triggered'); // Check if this logs
 
             // Get the current ingredients from #ingredient_list
@@ -185,12 +196,8 @@
             let subIngredients = initialIngredients.filter(ingredient => !currentIngredients.includes(ingredient));
 
             // Set the hidden input values
-            document.getElementById('pizzaId').value = pizzaId;
-            document.getElementById('size').value = getSelectedPizzaSize(pizzaId);
-            document.getElementById('amount').value = 1; // Set default count or dynamically set it
-            document.getElementById('add').value = addIngredients.join('&&&&'); // Join ingredients to be added
-            document.getElementById('sub').value = subIngredients.join('&&&&'); // Join ingredients to be subtracted
-            console.log(document.getElementById('pizzaId').value, document.getElementById('size').value,document.getElementById('add').value = addIngredients.join('&&&&'),document.getElementById('sub').value = subIngredients.join('&&&&'))
+            await set_values(pizzaId,pizzaName,addIngredients,subIngredients)
+            console.log(document.getElementById('pizzaId').value, document.getElementById('size').value,document.getElementById('amount').value,document.getElementById('add').value,document.getElementById('sub').value)
             // Submit the form like a normal POST
             document.getElementById('order-form').submit();
         }
