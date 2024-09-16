@@ -43,7 +43,7 @@ defmodule Pluggy.Router do
   get("/order/update", do: PortalController.index(conn, fn conn -> Order.update_order("Carl Svensson") end))
   post("/order/add", do: PortalController.index(conn, fn conn -> OrderController.create(conn, conn.body_params) end))
   post("/order/searchbar", do: OrderController.handleSearchInput(conn, conn.body_params))
-  post("/order/change-state", do: PortalController.index(conn, fn conn -> OrderController.change_state(conn, conn.body_params) end))
+  post("/order/change-state", do: OrderController.change_state(conn, conn.body_params))
   post("/order/remove-order", do: PortalController.index(conn, fn conn -> OrderController.remove_order(conn, conn.body_params) end))
   post("/order/remove-order-part", do: PortalController.index(conn, fn conn -> OrderController.remove_order_part(conn, conn.body_params) end))
 

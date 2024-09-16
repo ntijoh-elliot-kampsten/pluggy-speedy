@@ -6,6 +6,11 @@
   <link rel="stylesheet" type="text/css" href="/show_orders.css">
 </head>
 <body>
+  <div id="change_order_state_div">
+    
+  </div>
+
+
     <div class="show-orders-navbar">
       <form method="POST" action="/order/searchbar" id="search-bar-form">
         <input type="text" name="search_bar" id="search_bar" value="" placeholder="Sök på kunder">
@@ -61,15 +66,26 @@
               <span>
                 <%= order.total_price%> SEK
               </span>
-              <form id="change-state-form" action="/order/change-state" method="POST">
-                <input type="hidden" name="order_id" id="order_id" value="<%=order.order_id%>">
-                <input type="hidden" name="new_state" id="new_state" value="<%=Pluggy.Order.get_new_state(order.state)%>">
-                <button type="submit" class="show-order-collapsible-content-change-status" id="change-state">Status</button>
+              <form action="/order/change-state" method="POST">
+                <input type="hidden" name="order_id" value="<%= order.order_id %>">
+                <button type="submit" class="show-order-collapsible-content-change-status" name="new_state" value="Registrerad">Registrerad</button>
               </form>
-              
+              <form action="/order/change-state" method="POST">
+                <input type="hidden" name="order_id" value="<%= order.order_id %>">
+                <button type="submit" class="show-order-collapsible-content-change-status" name="new_state" value="Görs">Görs</button>
+              </form>
+              <form action="/order/change-state" method="POST">
+                <input type="hidden" name="order_id" value="<%= order.order_id %>">
+                <button type="submit" class="show-order-collapsible-content-change-status" name="new_state" value="Färdig">Färdig</button>
+              </form>
+              <form action="/order/change-state" method="POST">
+                <input type="hidden" name="order_id" value="<%= order.order_id %>">
+                <button type="submit" class="show-order-collapsible-content-change-status" name="new_state" value="Hämtad">Hämtad</button>
+              </form>
+
               <form id="remove-order-form" action="/order/remove-order" method="POST">
                 <input type="hidden" name="order_id" id="remove_order_id" value="<%=order.order_id%>">
-                <button type="submit" class="show-order-collapsible-content-remove-order" id="remove-order">Remove</button>
+                <button type="submit" class="show-order-collapsible-content-remove-order" id="remove-order">Ta bort</button>
               </form>
             </div>
           </div>
@@ -136,5 +152,7 @@ buttonDivs.forEach(div => {
     }
   });
 });
+
+
 </script>
 </html>
