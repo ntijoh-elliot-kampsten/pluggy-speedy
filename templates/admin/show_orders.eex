@@ -86,6 +86,7 @@ var search_bar = document.getElementById('search_bar');
 
 function sendData() {
   const input = search_bar.value;
+  console.log(input)
   document.getElementById("search-bar-form").submit();
 
   // // Send a POST request to the Elixir backend
