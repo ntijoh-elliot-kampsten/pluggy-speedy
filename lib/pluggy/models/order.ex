@@ -84,6 +84,7 @@ defmodule Pluggy.Order do
     )
   end
 
+  # Gets all orders containging the string passed in with params and parses it
   def get_search_result(params) do
     %{"search_bar" => search_result} = params
 
@@ -95,6 +96,8 @@ defmodule Pluggy.Order do
     |> parse_data()
   end
 
+  # Changes state of a order
+  @spec change_state(any(), nil | maybe_improper_list() | map()) :: Postgrex.Result.t()
   def change_state(_conn, params) do
     query = """
     UPDATE orders SET \"state\" = $1 WHERE id = $2
@@ -107,6 +110,7 @@ defmodule Pluggy.Order do
     )
   end
 
+  # Removes a order based on order id
   def remove_order(_conn, params) do
     query = """
     DELETE FROM orders WHERE id = $1
@@ -219,6 +223,7 @@ defmodule Pluggy.Order do
     %Order{pizza_id: id, add: add, sub: sub, price: price, pizza_count: pizza_count, size: size}
   end
 
+  # Parses DB data from table orders to readable format
   def parse_data([]), do: []
   def parse_data(rows) do
     # Gets orders and parses it
@@ -232,16 +237,13 @@ defmodule Pluggy.Order do
     orders
   end
 
+ #Gets the total price of a pizza with adds and the amount and returns it.
   def get_total_price(order_input, index, map_index \\ 0, map_length \\ 1, total_price \\ 0)
   def get_total_price(_order_input, _index, map_index, map_length, total_price) when map_index >= map_length, do: total_price
   def get_total_price(order_input, index, map_index, _map_length, total_price) do
     order_list = Enum.at(order_input, index)
     order_map = Enum.at(order_list, map_index)
-    get_total_price(order_input, index, map_index + 1, length(order_list) , total_price + Pizza.calculate_price(order_map.pizza_id, order_map.amount))
-
-    # Enum.reduce(0.0, fn pizza, acc ->
-    #   acc + ((pizza.amount || 0) * (pizza.price || 0.0)) # Default to 0 if nil
-    # end)
+    get_total_price(order_input, index, map_index + 1, length(order_list) , total_price + Pizza.calculate_price(order_map.pizza_id, order_map.add, order_map.amount))
   end
 
   def get_total_price2(order, price \\ 0)
@@ -278,10 +280,12 @@ defmodule Pluggy.Order do
     Map.get(@states, currentState, "Undefined")
   end
 
+  # Returns data in a simpler form to parse_data
   def get_full_order_data(rows, index, map_pos) do
     Enum.at(Enum.map(rows, &(Enum.at(&1, map_pos))), index)
   end
 
+  # parses the data about the actual order.
   def get_order_data(order_list, index) do
     order_map = Enum.at(order_list, index)
 
