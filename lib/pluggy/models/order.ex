@@ -84,8 +84,18 @@ defmodule Pluggy.Order do
     )
   end
 
+  def get_search_result(params) do
+    %{"search_bar" => search_result} = params
+
+    query = """
+    SELECT * FROM orders WHERE user_name ILIKE $1 AND state != $2;
+    """
+
+    Postgrex.query!(DB, query, ["%#{search_result}%", ""]).rows
+    |> parse_data()
+  end
+
   def change_state(_conn, params) do
-    IO.inspect(params)
     query = """
     UPDATE orders SET \"state\" = $1 WHERE id = $2
     """
@@ -98,7 +108,6 @@ defmodule Pluggy.Order do
   end
 
   def remove_order(_conn, params) do
-    IO.inspect(params)
     query = """
     DELETE FROM orders WHERE id = $1
     """
