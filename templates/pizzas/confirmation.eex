@@ -1,35 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Confirmation</title>
-  <link rel="stylesheet" href="confirmation.css">
-</head>
-<body>
-  <h1>Order Confirmed!</h1>
+<link rel="stylesheet" href="/confirmation.css">
+<h1>Order Confirmed!</h1>
 
-  <div class="confirmation-message">
-    <p>Thank you for your order! Your delicious pizza is on its way.</p>
-  </div>
+<div class="confirmation-message">
+  <p>Thank you for your order! Your delicious pizza is on its way.</p>
+</div>
 
-  <h2>Order Summary</h2>
+<h2>Order Summary</h2>
 
-  <div class="order-details">
-    <p>Order Number: <span>#12345</span></p>
-    <ul>
-      <%= for order <- orders do %>
-        <%= for pizza <- order.order do %>
-          <li>Pizza Name: <span><%= pizza.pizza_name %></span> | Amount: <span><%= pizza.amount %></span> | Price: <span>$<%= pizza.price %></span></li>
-        <% end %>
+<div class="order-details">
+  <p>Order Number: <span>#12345</span></p>
+  <ul>
+      <%= for pizza <- order do %>
+        <li>Pizza Name: <span><%= pizza.pizza_name %></span> | Amount: <span><%= pizza.amount %></span> | Price: <span>$<%= pizza.price %></span></li>
       <% end %>
-    </ul>
+  </ul>
 
-    <p>Total Amount: <span id="total-amount">$<%= Float.round(total_amount, 2) %></span></p>
-  </div>
+  <p>Total Amount: <span id="total-amount">$<%= total_amount %></span></p>
+</div>
 
-  <button onclick="window.location.href='/'">Back to Home</button>
+<button onclick="window.location.href='/'">Back to Home</button>
 
-  <a href="/order-history">View Order History</a>
-</body>
-</html>
+<a href="/order-history">View Order History</a>
+

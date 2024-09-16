@@ -1,6 +1,7 @@
 defmodule Pluggy.CheckoutController do
   require IEx
 
+  alias Pluggy.Helper
   alias Pluggy.Checkout
   alias Pluggy.User
   alias Pluggy.Order
@@ -28,7 +29,7 @@ defmodule Pluggy.CheckoutController do
     case Integer.parse(order_id) do
       {order_id_int, _} ->
         Checkout.finalize_order(order_id_int)
-        redirect(conn, "/order_confirmation")
+        redirect(conn, "/order_confirmation/#{order_id}")
 
       :error ->
         IO.puts("Invalid order ID received: #{order_id}")
@@ -36,7 +37,7 @@ defmodule Pluggy.CheckoutController do
     end
   end
 
-  def confirmation(conn) do
+  def confirmation(conn, id) do
     session_user = conn.private.plug_session["user_id"]
 
     current_user =
@@ -45,26 +46,12 @@ defmodule Pluggy.CheckoutController do
         _ -> User.get(session_user)
       end
 
-    orders = Pluggy.Checkout.get_current_order(1)
-
-    IO.inspect(orders, label: "Orders Data")
-    total_amount =
-      if is_list(orders) do
-        orders
-        |> Enum.flat_map(& &1.order)
-        |> Enum.reduce(0.0, fn pizza, acc ->
-          acc + pizza.amount * pizza.price
-        end)
-      else
-        0.0
-      end
-
-    IO.inspect(total_amount, label: "Total Amount")
+    order = Enum.at(Order.get(Helper.safe_string_to_integer(id)), 0).order |> Order.orders_size_name_to_id()
 
     send_resp(
       conn,
       200,
-      Pluggy.Template.render(conn, "pizzas/confirmation", user: current_user, orders: orders, total_amount: total_amount)
+      Pluggy.Template.render(conn, "pizzas/confirmation", user: current_user, order: order, total_amount: Order.get_total_price2(order))
     )
   end
 

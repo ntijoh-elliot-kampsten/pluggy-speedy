@@ -51,7 +51,7 @@ defmodule Pluggy.Router do
 
   get("/checkout", do: PortalController.index(conn, fn conn -> CheckoutController.index(conn) end))
   post("/checkout/finalize", do: PortalController.index(conn, fn conn -> CheckoutController.finalize(conn, conn.body_params) end))
-  get("/order_confirmation", do: PortalController.index(conn, fn conn -> CheckoutController.confirmation(conn) end))
+  get("/order_confirmation/:id", do: PortalController.index(conn, fn conn -> CheckoutController.confirmation(conn, id) end))
     # get("/fruits", do: FruitController.index(conn))
   # get("/fruits/new", do: FruitController.new(conn))
   # get("/fruits/:id", do: FruitController.show(conn, id))
