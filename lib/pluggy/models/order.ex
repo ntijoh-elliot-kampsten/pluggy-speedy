@@ -5,7 +5,7 @@ defmodule Pluggy.Order do
   alias Pluggy.Pizza
   alias Pluggy.Helper
 
-  @states %{"Registered" => "Making", "Making" => "Done"}
+  @states %{"Registrerad" => "Görs", "Görs" => "Färdig", "Färdig" => "Hämtad", "Hämtad" => "Registrerad"}
 
   def all do
     Postgrex.query!(DB, "SELECT * FROM orders ORDER BY id", []).rows

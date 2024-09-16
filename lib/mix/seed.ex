@@ -7,7 +7,7 @@ defmodule Mix.Tasks.Seed do
     drop_tables()
     create_tables()
     seed_data()
-    add_orders(1000)
+    add_orders(100)
   end
 
   defp drop_tables() do
