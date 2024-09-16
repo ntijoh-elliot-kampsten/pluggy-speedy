@@ -1,7 +1,12 @@
+<link rel="stylesheet" type="text/css" href="/customize.css">
 <div id="customize_grid">
-    <img src="<%= pizza.image_url %>" alt="din pizza" id="customized_pizza">
+    <div id="pizza_grid">
+        <h1><%= pizza.name%></h1>
+        <img src="<%= pizza.image_url %>" alt="din pizza" id="customized_pizza">
+    </div>
     
-    <div id="ingredients_list">
+    
+    <div id="ingredients_list_holder">
         <h1>Ingredienser på pizzan:</h1>
         <ul id="ingredient_list">
             <%= for {ingredient, index} <- Enum.with_index(pizza.ingredients) do %>
@@ -27,7 +32,6 @@
 </div>
 
 <div id="buyclass">
-    <p><strong><%= pizza.name %></strong></p>
     <label class="pizza-size-radio">
         <input type="radio" name="pizza-size-<%= pizza.id%>" id="pizza-size-1-<%= pizza.id %>" value="1" checked> Small
     </label> 
