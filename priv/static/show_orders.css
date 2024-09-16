@@ -108,7 +108,7 @@ body {
 
 .show-order-item-collapse-button:after {
     content: '\25BC';
-    color: white;
+    color: #E0E1DD;
     font-weight: bold;
     float: right;
     margin-left: 5px;
@@ -116,6 +116,22 @@ body {
 
 .active:after {
     content: "\25B2";
+}
+
+#item-state-Registrerad {
+    color: red;
+}
+
+#item-state-Görs {
+    color: yellow;
+}
+
+#item-state-Färdig {
+    color: limegreen;
+}
+
+#item-state-Hämtad {
+    color: cyan;
 }
 
 /* Navbar */

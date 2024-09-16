@@ -26,7 +26,7 @@
             <span class="show-order-item-order-id"><%=order.order_id%></span>
             <span class="show-order-item-user-name"><%=order.user_name%></span>
             <span class="show-order-item-price"><%= order.total_price%> SEK</span>
-            <span class="show-order-item-state"><%= order.state%></span>
+            <span class="show-order-item-state" id=<%="item-state-#{order.state}"%>><%= order.state%></span>
           </li>
           <div class="collapsible-content" id=<%="collapsible-content#{index}"%>>
             <ul class="show-order-collapsible-content-list">
