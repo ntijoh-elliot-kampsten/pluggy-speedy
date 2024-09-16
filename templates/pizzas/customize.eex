@@ -45,7 +45,7 @@
     </label>
     <br/>
     <br/>
-    <button class="pizza-negative-button" onclick="showBuy('<%= pizza.id %>')">Avbryt</button>
+    <button class="pizza-negative-button" onclick="window.location.href = '/main'">Avbryt</button>
     <button class="pizza-positive-button" onclick="buy('<%= pizza.id %>', '<%= pizza.name %>')">Köp</button>
 </div>
 
