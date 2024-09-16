@@ -18,7 +18,10 @@ defmodule Pluggy.PortalController do
           true ->
             case conn.private.plug_session["is_admin"] do
               true ->
-                redirect(conn, "/orders")
+                case conn.request_path == "/orders" do
+                  false -> redirect(conn, "/orders")
+                  true -> function.(conn)
+                end
               false ->
                 # User is logged in, execute the passed function
                 function.(conn)
