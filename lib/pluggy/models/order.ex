@@ -148,7 +148,7 @@ defmodule Pluggy.Order do
   end
 
   def get_size(size) do
-    test = case size do
+    case size do
       1 ->
         "Liten"
       2 ->
