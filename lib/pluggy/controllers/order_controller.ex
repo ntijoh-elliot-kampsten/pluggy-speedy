@@ -51,6 +51,11 @@ defmodule Pluggy.OrderController do
     redirect(conn, "/orders")
   end
 
+  def remove_order_part(conn, params) do
+    Order.remove_order_part(conn, params)
+    redirect(conn, "/orders")
+  end
+
   def change_state(conn, params) do
     Order.change_state(conn, params)
     redirect(conn, "/orders")

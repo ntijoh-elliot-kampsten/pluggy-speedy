@@ -55,7 +55,8 @@ defmodule Pluggy.Order do
             end
           ), conn.private.plug_session["user_name"]]
         )
-      true -> update_amount(conn, params)
+      true ->
+        update_amount(conn, params)
     end
   end
 
@@ -108,11 +109,62 @@ defmodule Pluggy.Order do
     )
   end
 
-  def create(conn, params) do
-    cond do
-      user_unsubmitted_order_exist(conn.private.plug_session["user_name"]) ->
-        update_order(conn, params)
+  def remove_order_part(conn, params) do
+    case user_unsubmitted_order_exist(conn.private.plug_session["user_name"]) do
+      false -> nil
       true ->
+        case pizza_in_order_exist(
+          orders_size_name_to_id(Enum.at(get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]), 0).order),
+          Helper.safe_string_to_integer(params["pizzaId"]),
+          get_size_id(Helper.safe_string_to_integer(params["size"])),
+          if params["add"] && params["add"] != "" do
+            String.split(params["add"], "&&&&")
+          else
+            []
+          end,
+          if params["sub"] && params["sub"] != "" do
+            String.split(params["sub"], "&&&&")
+          else
+            []
+          end) do
+          false -> nil
+          true ->
+            case Enum.count(Enum.at(get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]), 0).order) > 1 do
+              false ->
+                Postgrex.query!(
+                  DB,
+                  "DELETE FROM orders WHERE user_name = $1 and state = ''",
+                  [conn.private.plug_session["user_name"]]
+                )
+              true ->
+                Postgrex.query!(
+                  DB,
+                  "UPDATE orders SET \"current_order\" = $1 WHERE user_name = $2 AND state = ''",
+                  [build_updated_order_remove_part_string(
+                    orders_size_name_to_id(Enum.at(get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]), 0).order),
+                    Helper.safe_string_to_integer(params["pizzaId"]),
+                    get_size_id(Helper.safe_string_to_integer(params["size"])),
+                    if params["add"] && params["add"] != "" do
+                      String.split(params["add"], "&&&&")
+                    else
+                      []
+                    end,
+                    if params["sub"] && params["sub"] != "" do
+                      String.split(params["sub"], "&&&&")
+                    else
+                      []
+                    end
+                  ), conn.private.plug_session["user_name"]]
+                )
+            end
+        end
+    end
+  end
+
+  def create(conn, params) do
+    case user_unsubmitted_order_exist(conn.private.plug_session["user_name"]) do
+      true -> update_order(conn, params)
+      false ->
         # Insert the order into the database
         Postgrex.query!(
           DB,
@@ -244,7 +296,6 @@ defmodule Pluggy.Order do
     for [id, add, sub, price, pizza_count, size] <- rows, do: %Order{pizza_id: id, add: add, sub: sub, price: price, pizza_count: pizza_count, size: size}
   end
 
-  @spec pizza_in_order_exist(maybe_improper_list(), any(), any(), any()) :: any()
   def pizza_in_order_exist(order, pizza_id, size, add \\ [], sub \\ [])
   def pizza_in_order_exist([], _pizza_id, _size, _add, _sub), do: false
   def pizza_in_order_exist([head | _tail], pizza_id, size, add, sub) when head.pizza_id == pizza_id and head.size == size and head.add == add and head.sub == sub, do: true
@@ -252,7 +303,14 @@ defmodule Pluggy.Order do
 
   def order_match(order, pizza_id, size, add \\ [], sub \\ [])
   def order_match(order, pizza_id, size, add, sub) when order.pizza_id == pizza_id and order.size == size and order.add == add and order.sub == sub, do: true
-  def order_match(_order, _pizza_id, _size, _add, _sub), do: false
+  def order_match(order, pizza_id, size, add, sub) do
+    false
+  end
+
+  # needs to exist
+  def get_order_match_index(order, pizza_id, size, add \\ [], sub \\ [], acc \\ 0)
+  def get_order_match_index([head | _tail], pizza_id, size, add, sub, acc) when head.pizza_id == pizza_id and head.size == size and head.add == add and head.sub == sub, do: acc
+  def get_order_match_index([_head | tail], pizza_id, size, add, sub, acc), do: get_order_match_index(tail, pizza_id, size, add, sub, acc + 1)
 
   def get_user_unsubmitted_order_parsed(user_name), do: get_user_unsubmitted_order(user_name) |> parse_data
   def get_user_unsubmitted_order(user_name), do: Postgrex.query!(DB, "SELECT * FROM orders WHERE user_name = $1 and state = '' LIMIT 1", [user_name]).rows
@@ -280,25 +338,32 @@ defmodule Pluggy.Order do
   def build_updated_order_string(current_order, pizza_id, size, amount \\ 1, add \\ [], sub \\ [])
   def build_updated_order_string(current_order, pizza_id, size, amount, add, sub), do: build_updated_order(current_order, pizza_id, size, amount, add, sub) |> convert_list_to_string()
 
+  def build_updated_order_remove_part(current_order, pizza_id, size, add \\ [], sub \\ [])
+  def build_updated_order_remove_part(current_order, pizza_id, size, add, sub), do: List.delete_at(current_order, get_order_match_index(current_order, pizza_id, size, add, sub))
+
+  def build_updated_order_remove_part_string(current_order, pizza_id, size, add \\ [], sub \\ [])
+  def build_updated_order_remove_part_string(current_order, pizza_id, size, add, sub), do: build_updated_order_remove_part(current_order, pizza_id, size, add, sub) |> convert_list_to_string()
+
   def build_updated_order_count(order, order_length, pizza_id, size, add \\ [], sub \\ [], amount \\ 1, index \\ 0)
   def build_updated_order_count(order, order_length, _pizza_id, _size, _add, _sub, _amount, index) when order_length == index - 1, do: order
   def build_updated_order_count(order, order_length, pizza_id, size, add, sub, amount, index) do
     case order_match(Enum.at(order, index), pizza_id, get_size(size), add, sub) do
       true ->
-        List.update_at(order, index, fn item ->
-          %{item | amount: item.amount + amount}
-        end)
-        List.update_at(order, index, fn item ->
-          %{item | price: Pizza.calculate_price(item.pizza_id, item.add, item.amount)}
-        end)
-      false -> build_updated_order_count(order, order_length, pizza_id, add, sub, amount, index + 1)
+        List.update_at(
+          List.update_at(order, index, fn item ->
+            %{item | amount: item.amount + amount}
+          end),
+          index, fn item ->
+            %{item | price: Pizza.calculate_price(item.pizza_id, item.add, item.amount)}
+          end)
+      false -> build_updated_order_count(order, order_length, pizza_id, size, add, sub, amount, index + 1)
     end
   end
 
-  def build_updated_order_count_string(order, order_length, pizza_id, add \\ [], sub \\ [], amount \\ 1, index \\ 0)
-  def build_updated_order_count_string(order, order_length, pizza_id, add, sub, amount, index), do: build_updated_order_count(order, order_length, pizza_id, add, sub, amount, index) |> orders_size_name_to_id() |> convert_list_to_string()
+  def build_updated_order_count_string(order, order_length, pizza_id, size, add \\ [], sub \\ [], amount \\ 1, index \\ 0)
+  def build_updated_order_count_string(order, order_length, pizza_id, size, add, sub, amount, index), do: build_updated_order_count(order, order_length, pizza_id, size, add, sub, amount, index) |> orders_size_name_to_id() |> convert_list_to_string()
 
   def orders_size_name_to_id(orders, new_orders \\ [])
-  def orders_size_name_to_id([], new_orders), do: new_orders
-  def orders_size_name_to_id([head|_tail], new_orders), do: [%{head | size: get_size_id(head.size)}|new_orders]
+  def orders_size_name_to_id([], new_orders), do: Enum.reverse(new_orders)
+  def orders_size_name_to_id([head|tail], new_orders), do: orders_size_name_to_id(tail, [%{head | size: get_size_id(head.size)}|new_orders])
 end
