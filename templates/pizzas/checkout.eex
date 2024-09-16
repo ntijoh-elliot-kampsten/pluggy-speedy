@@ -22,15 +22,29 @@
         <%= for pizza <- order.order do %>
           <li>
             <div class="pizza-details">
-              <span>Pizza Name:</span> <span><%= pizza.pizza_name %></span> |
-              <span>Amount:</span> <span><%= pizza.amount %></span> |
-              <span>Price:</span> <span>$<%= pizza.price %></span>
+              <img class="pizza-image" src='/uploads/pizzas/<%= String.replace(pizza.pizza_name, " ", "-") %>.svg' alt=""> <span><%= pizza.pizza_name %></span> |
+              <span>Antal:</span> <span><%= pizza.amount %></span> |
+              <span>Storlek:</span> <span><%= pizza.size %></span> |
+              <%= if pizza.add != [] || pizza.sub != [] do %>
+              <span>Ändringar:</span> 
+              <div class="changes-container">
+                  <%= for add <- pizza.add do %>
+                  <span class="changed">+ <%= add %></span>
+                  <% end %>
+                  <%= for sub <- pizza.sub do %>
+                  <span class="changed">- <%= sub %></span>
+                  <% end %>
+              </div> |
+              <% end %>
+              <span>Pris:</span> <span>$<%= pizza.price %></span>
             </div>
-            <form action="/checkout/remove_pizza" method="post" style="display:inline;">
-              <input type="hidden" name="order_id" value="<%= order.order_id %>">
-              <input type="hidden" name="pizza_id" value="<%= pizza.pizza_id %>">
+            <form action="/order/remove-order-part" method="post" style="display:inline;">
+              <input type="hidden" name="pizzaId" value="<%= pizza.pizza_id %>">
+              <input type="hidden" name="size" value="<%= pizza.size %>">
+              <input type="hidden" name="add" value='<%= Enum.join(pizza.add, "&&&&") %>'>
+              <input type="hidden" name="sub" value='<%= Enum.join(pizza.sub, "&&&&") %>'>
               <button type="submit" class="remove-button">Remove</button>
-            </form>
+          </form>
           </li>
         <% end %>
       <% end %>

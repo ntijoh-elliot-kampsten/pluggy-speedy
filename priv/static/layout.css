@@ -92,3 +92,6 @@ input.pizza-amount {
     border-radius: 5px;
     width: 30px;
 }
+span.checkout-basket-list-changed {
+    margin-left: 5%;
+}

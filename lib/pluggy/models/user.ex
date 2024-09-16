@@ -11,6 +11,12 @@ defmodule Pluggy.User do
     |> to_struct
   end
 
+  def exist(id) do
+    Postgrex.query!(DB, "SELECT id, name FROM users WHERE id = $1 LIMIT 1", [Helper.safe_string_to_integer(id)],
+      pool: DBConnection.ConnectionPool
+    ).num_rows > 0
+  end
+
   def to_struct([[id, username, is_admin?]]) do
     %User{id: id, username: username, is_admin?: is_admin?}
   end

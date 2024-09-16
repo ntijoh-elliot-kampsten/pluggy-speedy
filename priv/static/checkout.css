@@ -43,6 +43,20 @@ body {
     align-items: center;
   }
   
+  .pizza-image {
+    width: 10%;
+  }
+
+  .changes-container {
+    display: flex;
+    flex-direction: column;
+    width: 10%;
+  }
+
+  .changed {
+    margin-left: 1%;
+  }
+
   /* Flex container for pizza details */
   .pizza-details {
     display: flex;

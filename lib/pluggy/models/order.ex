@@ -345,7 +345,7 @@ defmodule Pluggy.Order do
   def build_updated_order(current_order, pizza_id, size, amount, add, sub), do: [build_new_order(pizza_id, size, amount, add, sub) | current_order]
 
   def build_updated_order_string(current_order, pizza_id, size, amount \\ 1, add \\ [], sub \\ [])
-  def build_updated_order_string(current_order, pizza_id, size, amount, add, sub), do: build_updated_order(current_order, pizza_id, size, amount, add, sub) |> convert_list_to_string()
+  def build_updated_order_string(current_order, pizza_id, size, amount, add, sub), do: build_updated_order(current_order, pizza_id, size, amount, add, sub) |> orders_size_name_to_id() |> convert_list_to_string()
 
   def build_updated_order_remove_part(current_order, pizza_id, size, add \\ [], sub \\ [])
   def build_updated_order_remove_part(current_order, pizza_id, size, add, sub), do: List.delete_at(current_order, get_order_match_index(current_order, pizza_id, size, add, sub))
