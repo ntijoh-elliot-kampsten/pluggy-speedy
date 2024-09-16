@@ -56,6 +56,7 @@
                                 <input type="hidden" name="size" value="<%= pizza.size %>">
                                 <input type="hidden" name="add" value='<%= Enum.join(pizza.add, "&&&&") %>'>
                                 <input type="hidden" name="sub" value='<%= Enum.join(pizza.sub, "&&&&") %>'>
+                                <input type="hidden" name="oldLocation" value='/main'>
                                 <button type="submit" class="remove-button">Remove</button>
                             </form>
                         </div>
