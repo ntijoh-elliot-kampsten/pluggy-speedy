@@ -30,15 +30,18 @@
                                 <form action="/pizza/amount/update">
                                     Antal: <input type="number" class="pizza-amount" name="pizza-checkout-basket-amount-<%= pizza.pizza_id %>" id="pizza-checkout-basket-amount-<%= pizza.pizza_id %>" value="<%= pizza.amount %>"> |
                                     <input type="hidden" name="pizzaId" value="<%= pizza.pizza_id %>">
-                                    <input type="hidden" name="add" value="<%= pizza.add %>">
-                                    <input type="hidden" name="sub" value="<%= pizza.sub %>">
+                                    <input type="hidden" name="size" value="<%= pizza.size %>">
+                                    <input type="hidden" name="add" value='<%= Enum.join(pizza.add, "&&&&") %>'>
+                                    <input type="hidden" name="sub" value='<%= Enum.join(pizza.sub, "&&&&") %>'>
                                 </form>
                                 <span>Price:</span> <span>$<%= pizza.price %></span>
                             </div>
-                            <form action="/checkout/remove_pizza" method="post" style="display:inline;">
-                            <input type="hidden" name="order_id" value="<%= order.order_id %>">
-                            <input type="hidden" name="pizza_id" value="<%= pizza.pizza_id %>">
-                            <button type="submit" class="remove-button">Remove</button>
+                            <form action="/order/remove-order-part" method="post" style="display:inline;">
+                                <input type="hidden" name="pizzaId" value="<%= pizza.pizza_id %>">
+                                <input type="hidden" name="size" value="<%= pizza.size %>">
+                                <input type="hidden" name="add" value='<%= Enum.join(pizza.add, "&&&&") %>'>
+                                <input type="hidden" name="sub" value='<%= Enum.join(pizza.sub, "&&&&") %>'>
+                                <button type="submit" class="remove-button">Remove</button>
                             </form>
                         </div>
                         <% end %>

@@ -38,10 +38,11 @@ defmodule Pluggy.Router do
   get("/main", do: PizzaController.index(conn))
 
   get("/orders", do: OrderController.show_orders(conn))
+  get("/order/update", do: Order.update_order("Carl Svensson"))
   post("/order/add", do: OrderController.create(conn, conn.body_params))
   post("/order/change-state", do: OrderController.change_state(conn, conn.body_params))
   post("/order/remove-order", do: OrderController.remove_order(conn, conn.body_params))
-  get("/order/update", do: Order.update_order("Carl Svensson"))
+  post("/order/remove-order-part", do: OrderController.remove_order_part(conn, conn.body_params))
 
   get("/customize/:id", do: PizzaController.customize(conn, id))
 
