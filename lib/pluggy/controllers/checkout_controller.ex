@@ -56,7 +56,7 @@ defmodule Pluggy.CheckoutController do
     send_resp(
       conn,
       200,
-      Pluggy.Template.render(conn, "pizzas/confirmation", user: current_user, order: order, total_amount: Order.get_total_price2(order))
+      Pluggy.Template.render(conn, "pizzas/confirmation", user: current_user, order_number: id, order: order, total_amount: Order.get_total_price2(order))
     )
   end
 

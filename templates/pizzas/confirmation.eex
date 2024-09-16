@@ -8,7 +8,7 @@
 <h2>Order Summary</h2>
 
 <div class="order-details">
-  <p>Order Number: <span>#12345</span></p>
+  <p>Order Number: <span>#<%= order_number %></span></p>
   <ul>
       <%= for pizza <- order do %>
         <li>Pizza Name: <span><%= pizza.pizza_name %></span> | Amount: <span><%= pizza.amount %></span> | Price: <span>$<%= pizza.price %></span></li>
