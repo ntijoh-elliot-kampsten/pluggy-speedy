@@ -20,7 +20,24 @@ defmodule Pluggy.OrderController do
   # end
 
   def show_orders(conn) do
-    send_resp(conn, 200, render(conn, "admin/show_orders", [orders: Order.all()], false))
+    # get user if logged in
+    session_user = conn.private.plug_session["user_id"]
+
+    current_user =
+      case session_user do
+        nil -> nil
+        _ -> User.get(session_user)
+      end
+
+    if current_user == nil do
+      send_resp(conn, 200, render(conn, "pizzas/index", pizzas: Pizza.all(), user: current_user))
+    else
+      if(current_user.is_admin?) do
+        send_resp(conn, 200, render(conn, "admin/show_orders", [orders: Order.all(), user: current_user], false))
+      else
+        send_resp(conn, 200, render(conn, "pizzas/index", pizzas: Pizza.all(), user: current_user))
+      end
+    end
   end
 
   #render använder eex

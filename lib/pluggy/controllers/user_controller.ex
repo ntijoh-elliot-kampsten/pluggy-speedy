@@ -8,7 +8,7 @@ defmodule Pluggy.UserController do
 
      #Bör antagligen flytta SQL-anropet till user-model (t.ex User.find)
     result =
-      Postgrex.query!(DB, "SELECT id, password FROM users WHERE name = $1", [username],
+      Postgrex.query!(DB, "SELECT id, password, is_admin FROM users WHERE name = $1", [username],
         pool: DBConnection.ConnectionPool
       )
 
@@ -18,12 +18,13 @@ defmodule Pluggy.UserController do
         redirect(conn, "/login")
       # user with that username exists
       _ ->
-        [[id, password_hash]] = result.rows
+        [[id, password_hash, is_admin]] = result.rows
 
         # make sure password is correct
         if Bcrypt.verify_pass(password, password_hash) do
           Plug.Conn.put_session(conn, :user_id, id)
           |> Plug.Conn.put_session(:user_name, username)
+          |> Plug.Conn.put_session(:is_admin, is_admin)
           |> redirect("/main") #skicka vidare modifierad conn
         else
           redirect(conn, "/login")
