@@ -28,7 +28,7 @@
                             <div class="checkout-basket-pizza-details">
                                 <span><strong><%= pizza.pizza_name %></strong></span>
                                 <br/>
-                                <form action="/pizza/amount/update">
+                                <form action="/order/amount/update" method="POST">
                                     Antal: <input type="number" class="pizza-amount" name="amount" id="pizza-checkout-basket-amount-<%= pizza.pizza_id %>" value="<%= pizza.amount %>">
                                     <input type="hidden" name="pizzaId" value="<%= pizza.pizza_id %>">
                                     <input type="hidden" name="size" value="<%= pizza.size %>">
