@@ -25,10 +25,17 @@ defmodule Pluggy.UserController do
           Plug.Conn.put_session(conn, :user_id, id)
           |> Plug.Conn.put_session(:user_name, username)
           |> Plug.Conn.put_session(:is_admin, is_admin)
-          |> redirect("/main") #skicka vidare modifierad conn
+          |> correct_redirect() #skicka vidare modifierad conn
         else
           redirect(conn, "/login")
         end
+    end
+  end
+
+  defp correct_redirect(conn) do
+    case conn.private.plug_session["is_admin"] do
+      true -> redirect(conn, "/orders")
+      false -> redirect(conn, "/main")
     end
   end
 
