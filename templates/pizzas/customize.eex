@@ -33,15 +33,15 @@
 
 <div id="buyclass">
     <label class="pizza-size-radio">
-        <input type="radio" name="pizza-size-<%= pizza.id%>" id="pizza-size-1-<%= pizza.id %>" value="1" checked> Small
+        <input type="radio" name="pizza-size-<%= pizza.id%>" id="pizza-size-1-<%= pizza.id %>" value="1" checked> Liten
     </label> 
     <br/>
     <label class="pizza-size-radio">
-        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-2-<%= pizza.id %>" value="2"> Medium
+        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-2-<%= pizza.id %>" value="2"> Stor
     </label>
     <br/>
     <label class="pizza-size-radio">
-        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-3-<%= pizza.id %>" value="3"> Large
+        <input type="radio" name="pizza-size-<%= pizza.id %>" id="pizza-size-3-<%= pizza.id %>" value="3"> Familje
     </label>
     <br/>
     <br/>
