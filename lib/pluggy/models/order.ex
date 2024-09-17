@@ -85,15 +85,24 @@ defmodule Pluggy.Order do
   end
 
   # Gets all orders containging the string passed in with params and parses it
-  def get_search_result(params) do
-    %{"search_bar" => search_result} = params
+  def get_nav_bar_result(params) do
+    %{"search_bar" => search_result, "state-filter" => state_filter} = params
 
-    query = """
-    SELECT * FROM orders WHERE user_name ILIKE $1 AND state != $2 ORDER BY id ASC;
-    """
+    if state_filter == "" do
+      query = """
+      SELECT * FROM orders WHERE user_name ILIKE $1 AND state != $2 ORDER BY id ASC;
+      """
 
-    Postgrex.query!(DB, query, ["%#{search_result}%", ""]).rows
-    |> parse_data()
+      Postgrex.query!(DB, query, ["%#{search_result}%", state_filter]).rows
+      |> parse_data()
+    else
+      query = """
+      SELECT * FROM orders WHERE user_name ILIKE $1 AND state = $2 ORDER BY id ASC;
+      """
+
+      Postgrex.query!(DB, query, ["%#{search_result}%", state_filter]).rows
+      |> parse_data()
+    end
   end
 
   # Changes state of a order

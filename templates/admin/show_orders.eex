@@ -11,10 +11,33 @@
   </div>
 
 
-  <div class="show-orders-navbar">
-    <form method="POST" action="/order/searchbar" id="search-bar-form">
-      <input type="text" name="search_bar" id="search_bar" value="" placeholder="Sök på kunder">
-    </form>
+  <div class="show-orders-navbar-container">
+    <div class="show-orders-navbar">
+      <form method="POST" action="/order/searchbar" id="search-bar-form" class="nav-bar-form">
+        <input class="nav-bar-search-bar" type="text" name="search_bar" id="search_bar" value="" placeholder="Sök på kunder">
+
+        <div class="show-orders-filter-container">
+          <div class="filter-state">
+            <label for="filter-state-registrerad" class="filter-state-label">Registrerad:</label>
+            <input class="nav-bar-filter" type="radio" name="state-filter" id="filter-state-registrerad" value="Registrerad">
+  
+            <label for="filter-state-görs" class="filter-state-label">Görs:</label>
+            <input class="nav-bar-filter" type="radio" name="state-filter" id="filter-state-görs" value="Görs">
+  
+            <label for="filter-state-färdig" class="filter-state-label">Färdig:</label>
+            <input class="nav-bar-filter" type="radio" name="state-filter" id="filter-state-färdig" value="Färdig">
+  
+            <label for="filter-state-hämtad" class="filter-state-label">Hämtad:</label>
+            <input class="nav-bar-filter" type="radio" name="state-filter" id="filter-state-hämtad" value="Hämtad">
+  
+            <label for="filter-state-none" class="filter-state-label">Inget filter:</label>
+            <input class="nav-bar-filter" type="radio" name="state-filter" id="filter-state-none" value="" checked>
+          </div>
+        </div>
+
+        <button type="submit" class="nav-bar-submit" name="nav-bar-submit" value="Submit" id="nav-bar-submit-button">Sök</button>
+      </form>
+    </div>
   </div>
 
   <div class="show-orders-order-list-container">
@@ -98,35 +121,6 @@
 
 
 <script>
-var search_bar = document.getElementById('search_bar');
-
-function sendData() {
-  const input = search_bar.value;
-  console.log(input)
-  document.getElementById("search-bar-form").submit();
-
-  // // Send a POST request to the Elixir backend
-  // fetch('/order/searchbar', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json'
-  //   },
-  //   body: JSON.stringify({ query: input })
-  // })
-  // .then(response => response.json()) // Parse the JSON response
-  // .then(data => {
-  //   // Update the page with the response
-  //   console.log(data.message)
-  //   //document.getElementById('response').innerText = data.message;
-  // })
-  // .catch(error => {
-  //   console.error('Error:', error);
-  // });
-}
-
-search_bar.onchange = sendData;
-// search_bar.onblur = sendData;
-
 // Select all divs with the class "show-order-item-collapse-button"
 const buttonDivs = document.querySelectorAll('.show-order-item-collapse-button');
 

@@ -40,8 +40,8 @@ defmodule Pluggy.OrderController do
     end
   end
 
-  def handleSearchInput(conn, params) do
-    result = Order.get_search_result(params)
+  def handle_navbar_input(conn, params) do
+    result = Order.get_nav_bar_result(params)
 
     session_user = conn.private.plug_session["user_id"]
 
