@@ -41,7 +41,7 @@ defmodule Pluggy.Order do
           [build_updated_order_string(
             Enum.at(get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]), 0).order,
             Helper.safe_string_to_integer(params["pizzaId"]),
-            Helper.safe_string_to_integer(params["size"]),
+            get_size(Helper.safe_string_to_integer(params["size"])),
             Helper.safe_string_to_integer(params["amount"]),
             if params["add"] && params["add"] != "" do
               String.split(params["add"], "&&&&")
@@ -132,13 +132,14 @@ defmodule Pluggy.Order do
   end
 
   def remove_order_part(conn, params) do
+    IO.inspect(params)
     case user_unsubmitted_order_exist(conn.private.plug_session["user_name"]) do
       false -> nil
       true ->
         case pizza_in_order_exist(
           orders_size_name_to_id(Enum.at(get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]), 0).order),
           Helper.safe_string_to_integer(params["pizzaId"]),
-          get_size_id(Helper.safe_string_to_integer(params["size"])),
+          get_size_id(params["size"]),
           if params["add"] && params["add"] != "" do
             String.split(params["add"], "&&&&")
           else
@@ -151,6 +152,7 @@ defmodule Pluggy.Order do
           end) do
           false -> nil
           true ->
+            IO.inspect(true)
             case Enum.count(Enum.at(get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]), 0).order) > 1 do
               false ->
                 Postgrex.query!(
@@ -165,7 +167,7 @@ defmodule Pluggy.Order do
                   [build_updated_order_remove_part_string(
                     orders_size_name_to_id(Enum.at(get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]), 0).order),
                     Helper.safe_string_to_integer(params["pizzaId"]),
-                    get_size_id(Helper.safe_string_to_integer(params["size"])),
+                    get_size_id(params["size"]),
                     if params["add"] && params["add"] != "" do
                       String.split(params["add"], "&&&&")
                     else
@@ -281,7 +283,7 @@ defmodule Pluggy.Order do
       "Familjepizza" ->
         3
       _ ->
-        1
+        nil
     end
   end
 
