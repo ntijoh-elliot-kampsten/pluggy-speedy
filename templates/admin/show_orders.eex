@@ -68,19 +68,19 @@
             </span>
             <form action="/order/change-state" method="POST">
               <input type="hidden" name="order_id" value="<%= order.order_id %>">
-              <button type="submit" class="show-order-collapsible-content-change-status" name="new_state" value="Registrerad">Registrerad</button>
+              <button type="submit" class="show-order-collapsible-content-change-status" name="new_state" value="Registrerad" id="change-state-Registrerad">Registrerad</button>
             </form>
             <form action="/order/change-state" method="POST">
               <input type="hidden" name="order_id" value="<%= order.order_id %>">
-              <button type="submit" class="show-order-collapsible-content-change-status" name="new_state" value="Görs">Görs</button>
+              <button type="submit" class="show-order-collapsible-content-change-status" name="new_state" value="Görs" id="change-state-Görs">Görs</button>
             </form>
             <form action="/order/change-state" method="POST">
               <input type="hidden" name="order_id" value="<%= order.order_id %>">
-              <button type="submit" class="show-order-collapsible-content-change-status" name="new_state" value="Färdig">Färdig</button>
+              <button type="submit" class="show-order-collapsible-content-change-status" name="new_state" value="Färdig" id="change-state-Färdig">Färdig</button>
             </form>
             <form action="/order/change-state" method="POST">
               <input type="hidden" name="order_id" value="<%= order.order_id %>">
-              <button type="submit" class="show-order-collapsible-content-change-status" name="new_state" value="Hämtad">Hämtad</button>
+              <button type="submit" class="show-order-collapsible-content-change-status" name="new_state" value="Hämtad" id="change-state-Hämtad">Hämtad</button>
             </form>
 
             <form id="remove-order-form" action="/order/remove-order" method="POST">

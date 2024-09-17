@@ -89,7 +89,7 @@ defmodule Pluggy.Order do
     %{"search_bar" => search_result} = params
 
     query = """
-    SELECT * FROM orders WHERE user_name ILIKE $1 AND state != $2;
+    SELECT * FROM orders WHERE user_name ILIKE $1 AND state != $2 ORDER BY id ASC;
     """
 
     Postgrex.query!(DB, query, ["%#{search_result}%", ""]).rows

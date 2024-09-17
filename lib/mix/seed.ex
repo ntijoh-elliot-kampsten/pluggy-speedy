@@ -96,7 +96,7 @@ defmodule Mix.Tasks.Seed do
       "Hjalmarsson", "Näslund", "Ågren", "Forslund", "Augustsson", "Lindkvist",
       "Asplund", "Brandt", "Lundkvist", "Mohamed", "Dahlin"]
 
-    Enum.each(0..amount_orders, fn(x) ->
+    Enum.each(0..amount_orders-1, fn(x) ->
 
       state = case :rand.uniform(3) do
         1 -> "Registrerad"
