@@ -132,7 +132,6 @@ defmodule Pluggy.Order do
   end
 
   def remove_order_part(conn, params) do
-    IO.inspect(params)
     case user_unsubmitted_order_exist(conn.private.plug_session["user_name"]) do
       false -> nil
       true ->
@@ -152,7 +151,6 @@ defmodule Pluggy.Order do
           end) do
           false -> nil
           true ->
-            IO.inspect(true)
             case Enum.count(Enum.at(get_user_unsubmitted_order_parsed(conn.private.plug_session["user_name"]), 0).order) > 1 do
               false ->
                 Postgrex.query!(

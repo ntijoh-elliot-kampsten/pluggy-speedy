@@ -29,7 +29,7 @@
                                 <span><strong><%= pizza.pizza_name %></strong></span>
                                 <br/>
                                 <form action="/pizza/amount/update">
-                                    Antal: <input type="number" class="pizza-amount" name="pizza-checkout-basket-amount-<%= pizza.pizza_id %>" id="pizza-checkout-basket-amount-<%= pizza.pizza_id %>" value="<%= pizza.amount %>">
+                                    Antal: <input type="number" class="pizza-amount" name="amount" id="pizza-checkout-basket-amount-<%= pizza.pizza_id %>" value="<%= pizza.amount %>">
                                     <input type="hidden" name="pizzaId" value="<%= pizza.pizza_id %>">
                                     <input type="hidden" name="size" value="<%= pizza.size %>">
                                     <input type="hidden" name="add" value='<%= Enum.join(pizza.add, "&&&&") %>'>
